@@ -7,7 +7,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ title }) => {
     return (
-        <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+        <header className="absolute top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-gray-200 px-6 py-4 flex justify-between items-center">
             <h1 className="text-lg font-bold text-foreground tracking-tight">{title}</h1>
             <Link href="/test" className="text-gray-400 hover:text-foreground transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
