@@ -6,6 +6,8 @@ export interface Expense {
     date: string;
     payer: string;
     participants: number;
+    isParticipant: boolean;
+    borrower?: string;
 }
 
 export interface SettlementSummary {
@@ -27,6 +29,7 @@ export const mockExpenses: Expense[] = [
         amount: 120000,
         date: '2024-05-01T18:30:00',
         payer: '민지',
+        isParticipant: true,
         participants: 4,
     },
     {
@@ -36,6 +39,8 @@ export const mockExpenses: Expense[] = [
         date: '2024-05-01T21:00:00',
         payer: '현우',
         participants: 2,
+        isParticipant: true,
+        borrower: '민지',
     },
     {
         id: '3',
@@ -43,14 +48,16 @@ export const mockExpenses: Expense[] = [
         amount: 12000,
         date: '2024-05-02T10:00:00',
         payer: '상현',
+        isParticipant: true,
         participants: 3,
     },
     {
         id: '4',
-        title: '주유비',
-        amount: 50000,
+        title: '택시',
+        amount: 20000,
         date: '2024-05-02T14:00:00',
         payer: '민지',
+        isParticipant: false,
         participants: 4,
     },
     {
@@ -59,14 +66,7 @@ export const mockExpenses: Expense[] = [
         amount: 22000,
         date: '2024-05-03T13:00:00',
         payer: '현우',
+        isParticipant: true,
         participants: 2,
-    },
-    {
-        id: '6',
-        title: '기념품',
-        amount: 35000,
-        date: '2024-05-03T16:00:00',
-        payer: '상현',
-        participants: 1,
     },
 ];

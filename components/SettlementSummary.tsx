@@ -25,9 +25,9 @@ const SettlementSummary: React.FC<SettlementSummaryProps> = ({ summary }) => {
             <div className={`text-4xl font-bold tracking-tighter ${amountColor} mb-2`}>
                 {formattedAmount}<span className="text-2xl text-foreground/80"> 원</span>
             </div>
-            <Link href="/test" className="flex items-center text-sm font-medium text-gray-500 hover:text-foreground transition-colors group">
+            <Link href="/test" className="flex items-center text-sm font-bold text-blue-400 hover:text-blue-500 transition-colors group">
                 정산 상세 보기
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 ml-1 group-hover:translate-x-0.5 transition-transform">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={4} stroke="currentColor" className="w-3 h-3 ml-1 group-hover:translate-x-0.5 transition-transform mb-[1px]">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                 </svg>
             </Link>

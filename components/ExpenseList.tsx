@@ -13,13 +13,21 @@ const ExpenseList: React.FC<ExpenseListProps> = ({ expenses }) => {
         <div className="px-6 pb-24">
             <h2 className="text-sm font-semibold text-gray-400 mb-6 tracking-wide uppercase">지출 내역</h2>
             <div className="flex flex-col">
-                {sortedExpenses.map((expense, index) => (
-                    <ExpenseCard
-                        key={expense.id}
-                        expense={expense}
-                        isLast={index === sortedExpenses.length - 1}
-                    />
-                ))}
+                {sortedExpenses.map((expense, index) => {
+                    const isNewDate = index === 0 ||
+                        new Date(sortedExpenses[index - 1].date).getDate() !== new Date(expense.date).getDate();
+
+                    return (
+                        <ExpenseCard
+                            key={expense.id}
+                            expense={expense}
+                            isLast={index === sortedExpenses.length - 1}
+                            isParticipant={expense.isParticipant}
+                            borrower={expense.borrower}
+                            showDate={isNewDate}
+                        />
+                    );
+                })}
             </div>
         </div>
     );
