@@ -7,15 +7,17 @@ interface ExpenseListProps {
 }
 
 const ExpenseList: React.FC<ExpenseListProps> = ({ expenses }) => {
+    const sortedExpenses = [...expenses].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
     return (
         <div className="px-6 pb-24">
-            <h2 className="text-sm font-semibold text-gray-400 mb-6 tracking-wide uppercase">지출 내역</h2>
+            <h2 className="text-sm font-semibold text-gray-400 mb-6 tracking-wide uppercase">Activities</h2>
             <div className="flex flex-col">
-                {expenses.map((expense, index) => (
+                {sortedExpenses.map((expense, index) => (
                     <ExpenseCard
                         key={expense.id}
                         expense={expense}
-                        isLast={index === expenses.length - 1}
+                        isLast={index === sortedExpenses.length - 1}
                     />
                 ))}
             </div>
