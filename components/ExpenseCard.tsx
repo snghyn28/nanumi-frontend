@@ -35,15 +35,12 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, isLast }) => {
                 <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100/60 hover:shadow-md transition-shadow duration-200">
                     <div className="flex justify-between items-start mb-1">
                         <h3 className="text-base font-semibold text-foreground truncate pr-2">{expense.title}</h3>
-                        <span className={`text-base font-bold whitespace-nowrap ${expense.type === 'receive' ? 'text-receive' : 'text-pay'}`}>
+                        <span className={"text-base font-bold whitespace-nowrap text-accent"}>
                             {formattedAmount}
                         </span>
                     </div>
-                    <div className="flex justify-between items-center text-sm text-gray-400">
-                        <span>{expense.payer} paid</span>
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-gray-50 text-gray-400 font-medium">
-                            {expense.type === 'receive' ? 'To receive' : 'To send'}
-                        </span>
+                    <div className="flex justify-start items-center text-sm text-gray-400">
+                        <span>{expense.payer}</span>
                     </div>
                 </div>
             </div>
