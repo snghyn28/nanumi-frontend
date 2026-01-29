@@ -41,7 +41,7 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, isLast }) => {
                     </div>
                     <div className="flex justify-between items-center text-sm text-gray-400">
                         <span className="font-semibold">{expense.payer}</span>
-                        <span>참여 <span className="font-semibold">3명</span></span>
+                        <span>참여 <span className="font-semibold">{expense.participants}명</span></span>
                     </div>
                 </div>
             </div>
