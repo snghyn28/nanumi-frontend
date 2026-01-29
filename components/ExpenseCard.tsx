@@ -10,9 +10,12 @@ import { useRouter } from 'next/navigation';
 interface ExpenseCardProps {
     expense: Expense;
     isLast: boolean;
+    isParticipant: boolean;
+    borrower?: string;
+    showDate?: boolean;
 }
 
-const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, isLast }) => {
+const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, isLast, isParticipant, borrower, showDate = true }) => {
     const router = useRouter();
 
     // Format date specifically: e.g., "5.1"
@@ -65,14 +68,18 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, isLast }) => {
         <div className="flex gap-4 relative">
             {/* Timeline Line */}
             {!isLast && (
-                <div className="absolute left-[15px] top-8 bottom-[-16px] w-[2px] bg-gray-100" />
+                <div
+                    className={`absolute left-[15px] w-[2px] bg-gray-100 ${showDate ? "top-8" : "top-0"} bottom-[-16px]`}
+                />
             )}
 
             {/* Date Circle */}
-            <div className="relative z-10 flex-shrink-0">
-                <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center border border-gray-100/50 shadow-sm">
-                    <span className="text-[10px] font-bold text-gray-400">{formattedDate}</span>
-                </div>
+            <div className="relative z-10 flex-shrink-0 w-8 flex justify-center">
+                {showDate && (
+                    <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center border border-gray-100/50 shadow-sm">
+                        <span className="text-[10px] font-bold text-gray-400">{formattedDate}</span>
+                    </div>
+                )}
             </div>
 
             {/* Content */}
@@ -97,23 +104,33 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, isLast }) => {
                 >
                     <div className="flex justify-between items-start mb-1">
                         <h3 className="text-base font-semibold text-foreground truncate pr-2">{expense.title}</h3>
-                        <span className={"font-bold whitespace-nowrap text-accent"}>
+                        <span className={`font-bold whitespace-nowrap ${isParticipant ? "text-accent" : "text-gray-500"}`}>
                             {formattedAmount}원
                         </span>
                     </div>
                     <div className="flex justify-between items-center text-sm text-gray-400">
-                        <span className="font-semibold">{expense.payer}</span>
-                        <span>참여 <span className="font-semibold">{expense.participants}명</span></span>
+                        <div className="flex items-center gap-1">
+                            <span className="font-semibold">{expense.payer}</span>
+                            {borrower && (
+                                <span className="flex items-center gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3 text-gray-400">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                    </svg>
+                                    <span className="font-semibold">{borrower}</span>
+                                </span>
+                            )}
+                        </div>
+                        {borrower ? '대여' : <span>참여 <span className="font-semibold">{expense.participants}명</span></span>}
                     </div>
                 </motion.div>
-            </div>
+            </div >
 
             <DeleteModal
                 isOpen={isDeleteModalOpen}
                 onClose={handleCloseModal}
                 onConfirm={handleConfirmDelete}
             />
-        </div>
+        </div >
     );
 };
 
