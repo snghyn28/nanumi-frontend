@@ -5,31 +5,47 @@ import { Expense } from '@/data/mockData';
 import { motion, useAnimation, PanInfo } from 'framer-motion';
 import DeleteModal from './DeleteModal';
 
+import { useRouter } from 'next/navigation';
+
 interface ExpenseCardProps {
     expense: Expense;
     isLast: boolean;
 }
 
 const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, isLast }) => {
+    const router = useRouter();
+
     // Format date specifically: e.g., "5.1"
     const dateObj = new Date(expense.date);
     const month = dateObj.getMonth() + 1;
     const day = dateObj.getDate();
-    const formattedDate = `${month}.${day} `;
+    const formattedDate = `${month}.${day}`;
 
     // Format amount
     const formattedAmount = new Intl.NumberFormat('en-US').format(expense.amount);
 
     const controls = useAnimation();
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
+
+    const handleDragStart = () => {
+        setIsDragging(true);
+    };
 
     const handleDragEnd = async (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+        setIsDragging(false);
         if (info.offset.x > 50) {
             // Swiped right enough
             setIsDeleteModalOpen(true);
         } else {
             // Snap back
             controls.start({ x: 0 });
+        }
+    };
+
+    const handleClick = () => {
+        if (!isDragging && !isDeleteModalOpen) {
+            router.push('/test');
         }
     };
 
@@ -72,14 +88,16 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, isLast }) => {
                     drag="x"
                     dragConstraints={{ left: 0, right: 100 }}
                     dragElastic={{ left: 0, right: 0.1 }}
+                    onDragStart={handleDragStart}
                     onDragEnd={handleDragEnd}
                     animate={controls}
                     whileTap={{ cursor: "grabbing" }}
-                    className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100/60 hover:shadow-md transition-shadow duration-200 relative"
+                    onClick={handleClick}
+                    className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100/60 hover:shadow-md transition-shadow duration-200 relative cursor-pointer"
                 >
                     <div className="flex justify-between items-start mb-1">
                         <h3 className="text-base font-semibold text-foreground truncate pr-2">{expense.title}</h3>
-                        <span className={"text - base font - bold whitespace - nowrap text-accent"}>
+                        <span className={"font-bold whitespace-nowrap text-accent"}>
                             {formattedAmount}원
                         </span>
                     </div>
