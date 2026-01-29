@@ -65,13 +65,13 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, isLast }) => {
         <div className="flex gap-4 relative">
             {/* Timeline Line */}
             {!isLast && (
-                <div className="absolute left-[19px] top-10 bottom-[-16px] w-[2px] bg-gray-100" />
+                <div className="absolute left-[15px] top-8 bottom-[-16px] w-[2px] bg-gray-100" />
             )}
 
             {/* Date Circle */}
             <div className="relative z-10 flex-shrink-0">
-                <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center border border-gray-100/50 shadow-sm">
-                    <span className="text-xs font-bold text-gray-500">{formattedDate}</span>
+                <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center border border-gray-100/50 shadow-sm">
+                    <span className="text-[10px] font-bold text-gray-400">{formattedDate}</span>
                 </div>
             </div>
 
