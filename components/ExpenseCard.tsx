@@ -67,11 +67,9 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, isLast, isParticipan
     return (
         <div className="flex gap-4 relative">
             {/* Timeline Line */}
-            {!isLast && (
-                <div
-                    className={`absolute left-[15px] w-[2px] bg-gray-100 ${showDate ? "top-8" : "top-0"} bottom-[-16px]`}
-                />
-            )}
+            <div
+                className={`absolute left-[15px] w-[2px] bg-gray-100 ${showDate ? "top-8" : "top-0"} bottom-[-16px]`}
+            />
 
             {/* Date Circle */}
             <div className="relative z-10 flex-shrink-0 w-8 flex justify-center">
