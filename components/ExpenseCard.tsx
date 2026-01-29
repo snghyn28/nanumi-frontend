@@ -36,11 +36,12 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, isLast }) => {
                     <div className="flex justify-between items-start mb-1">
                         <h3 className="text-base font-semibold text-foreground truncate pr-2">{expense.title}</h3>
                         <span className={"text-base font-bold whitespace-nowrap text-accent"}>
-                            {formattedAmount}
+                            {formattedAmount}원
                         </span>
                     </div>
-                    <div className="flex justify-start items-center text-sm text-gray-400">
-                        <span>{expense.payer}</span>
+                    <div className="flex justify-between items-center text-sm text-gray-400">
+                        <span className="font-semibold">{expense.payer}</span>
+                        <span>참여 <span className="font-semibold">3명</span></span>
                     </div>
                 </div>
             </div>
