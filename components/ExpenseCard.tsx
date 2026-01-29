@@ -1,5 +1,9 @@
-import React from 'react';
+"use client";
+
+import React, { useState } from 'react';
 import { Expense } from '@/data/mockData';
+import { motion, useAnimation, PanInfo } from 'framer-motion';
+import DeleteModal from './DeleteModal';
 
 interface ExpenseCardProps {
     expense: Expense;
@@ -11,10 +15,35 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, isLast }) => {
     const dateObj = new Date(expense.date);
     const month = dateObj.getMonth() + 1;
     const day = dateObj.getDate();
-    const formattedDate = `${month}.${day}`;
+    const formattedDate = `${month}.${day} `;
 
     // Format amount
     const formattedAmount = new Intl.NumberFormat('en-US').format(expense.amount);
+
+    const controls = useAnimation();
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+    const handleDragEnd = async (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+        if (info.offset.x > 50) {
+            // Swiped right enough
+            setIsDeleteModalOpen(true);
+        } else {
+            // Snap back
+            controls.start({ x: 0 });
+        }
+    };
+
+    const handleCloseModal = () => {
+        setIsDeleteModalOpen(false);
+        controls.start({ x: 0 });
+    };
+
+    const handleConfirmDelete = () => {
+        // Implement delete logic here later
+        console.log('Deleted expense:', expense.id);
+        setIsDeleteModalOpen(false);
+        controls.start({ x: 0 }); // Or animate out
+    };
 
     return (
         <div className="flex gap-4 relative">
@@ -31,11 +60,26 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, isLast }) => {
             </div>
 
             {/* Content */}
-            <div className="flex-1 pb-8 min-w-0">
-                <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100/60 hover:shadow-md transition-shadow duration-200">
+            <div className="flex-1 pb-8 min-w-0 relative group">
+                {/* Delete Background */}
+                <div className="absolute inset-y-0 left-0 w-full bg-red-500 rounded-2xl flex items-center justify-start px-6 mb-8 transform scale-[0.98]">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6 text-white">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                    </svg>
+                </div>
+
+                <motion.div
+                    drag="x"
+                    dragConstraints={{ left: 0, right: 100 }}
+                    dragElastic={{ left: 0, right: 0.1 }}
+                    onDragEnd={handleDragEnd}
+                    animate={controls}
+                    whileTap={{ cursor: "grabbing" }}
+                    className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100/60 hover:shadow-md transition-shadow duration-200 relative"
+                >
                     <div className="flex justify-between items-start mb-1">
                         <h3 className="text-base font-semibold text-foreground truncate pr-2">{expense.title}</h3>
-                        <span className={"text-base font-bold whitespace-nowrap text-accent"}>
+                        <span className={"text - base font - bold whitespace - nowrap text-accent"}>
                             {formattedAmount}원
                         </span>
                     </div>
@@ -43,8 +87,14 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, isLast }) => {
                         <span className="font-semibold">{expense.payer}</span>
                         <span>참여 <span className="font-semibold">{expense.participants}명</span></span>
                     </div>
-                </div>
+                </motion.div>
             </div>
+
+            <DeleteModal
+                isOpen={isDeleteModalOpen}
+                onClose={handleCloseModal}
+                onConfirm={handleConfirmDelete}
+            />
         </div>
     );
 };

@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center">
       {/* Mobile Wrapper */}
-      <div className="w-full max-w-md bg-white shadow-xl min-h-screen relative flex flex-col">
+      <div className="w-full max-w-md bg-white shadow-xl min-h-screen relative flex flex-col overflow-x-hidden">
         <Header title={mockSummary.groupTitle} />
 
         <main className="flex-1">
