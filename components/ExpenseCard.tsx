@@ -81,7 +81,7 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, isLast, isParticipan
             </div>
 
             {/* Content */}
-            <div className="flex-1 pb-6 min-w-0 relative group">
+            <div className="flex-1 pb-4 min-w-0 relative group">
                 {/* Delete Background */}
                 <div className="absolute inset-y-0 left-0 w-full bg-red-500 rounded-2xl flex items-center justify-start px-6 mb-6 transform scale-[0.98]">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6 text-white">

@@ -24,6 +24,15 @@ export const mockSummary: SettlementSummary = {
 
 export const mockExpenses: Expense[] = [
     {
+        id: '0',
+        title: '숙소',
+        amount: 500000,
+        date: '2024-05-01T18:20:00',
+        payer: '민지',
+        isParticipant: true,
+        participants: 4,
+    },
+    {
         id: '1',
         title: '흑돼지 바베큐',
         amount: 120000,
@@ -69,4 +78,16 @@ export const mockExpenses: Expense[] = [
         isParticipant: true,
         participants: 2,
     },
+];
+
+export interface Participant {
+    id: string;
+    name: string;
+}
+
+export const PARTICIPANTS: Participant[] = [
+    { id: '1', name: '김상현 (나)' },
+    { id: '2', name: '김철수' },
+    { id: '3', name: '이영희' },
+    { id: '4', name: '박민수' },
 ];

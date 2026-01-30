@@ -1,10 +1,16 @@
+"use client";
+
+import React, { useState } from "react";
 import Header from "@/components/Header";
 import SettlementSummary from "@/components/SettlementSummary";
 import ExpenseList from "@/components/ExpenseList";
 import AddExpenseButton from "@/components/AddExpenseButton";
+import AddExpenseModal from "@/components/AddExpenseModal";
 import { mockSummary, mockExpenses } from "@/data/mockData";
 
 export default function Home() {
+  const [isAddExpenseModalOpen, setIsAddExpenseModalOpen] = useState(false);
+
   return (
     <div className="min-h-[100dvh] bg-gray-50 flex justify-center">
       {/* Mobile Wrapper */}
@@ -16,7 +22,12 @@ export default function Home() {
           <ExpenseList expenses={mockExpenses} />
         </main>
 
-        <AddExpenseButton />
+        <AddExpenseButton onClick={() => setIsAddExpenseModalOpen(true)} />
+
+        <AddExpenseModal
+          isOpen={isAddExpenseModalOpen}
+          onClose={() => setIsAddExpenseModalOpen(false)}
+        />
       </div>
     </div>
   );
