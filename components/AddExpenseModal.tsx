@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { PARTICIPANTS, Participant } from '../data/mockData';
 import SplitMode from './SplitMode';
 import IndividualMode from './IndividualMode';
 import LoanMode from './LoanMode';
@@ -16,6 +17,25 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose }) =>
     const [amount, setAmount] = useState('');
     const [amountType, setAmountType] = useState<'total' | 'perPerson'>('total');
 
+    // Shared State
+    const [date, setDate] = useState(() => {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        return now.toISOString().slice(0, 16);
+    });
+
+    // Split Mode State
+    const [selectedPayer, setSelectedPayer] = useState(PARTICIPANTS[0]); // Default payer
+    const [selectedParticipantIds, setSelectedParticipantIds] = useState<string[]>(PARTICIPANTS.map(p => p.id));
+
+    // Individual Mode State
+    const [individualAmounts, setIndividualAmounts] = useState<Record<string, string>>({});
+
+    // Loan Mode State
+    const [lender, setLender] = useState(PARTICIPANTS[0]);
+    const [borrower, setBorrower] = useState(PARTICIPANTS[1]);
+
+
     const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.replace(/[^0-9]/g, '');
         setAmount(value ? Number(value).toLocaleString() : '');
@@ -30,15 +50,36 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose }) =>
                         onAmountChange={handleAmountChange}
                         amountType={amountType}
                         onAmountTypeChange={setAmountType}
+                        payer={selectedPayer}
+                        onPayerChange={setSelectedPayer}
+                        selectedParticipantIds={selectedParticipantIds}
+                        onParticipantsChange={setSelectedParticipantIds}
+                        date={date}
+                        onDateChange={setDate}
                     />
                 );
             case '각자 분담':
-                return <IndividualMode />;
+                return (
+                    <IndividualMode
+                        amounts={individualAmounts}
+                        onAmountsChange={setIndividualAmounts}
+                        payer={selectedPayer}
+                        onPayerChange={setSelectedPayer}
+                        date={date}
+                        onDateChange={setDate}
+                    />
+                );
             case '대여':
                 return (
                     <LoanMode
                         amount={amount}
                         onAmountChange={handleAmountChange}
+                        lender={lender}
+                        onLenderChange={setLender}
+                        borrower={borrower}
+                        onBorrowerChange={setBorrower}
+                        date={date}
+                        onDateChange={setDate}
                     />
                 );
             default:

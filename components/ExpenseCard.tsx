@@ -13,9 +13,10 @@ interface ExpenseCardProps {
     isParticipant: boolean;
     borrower?: string;
     showDate?: boolean;
+    onClick?: () => void;
 }
 
-const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, isLast, isParticipant, borrower, showDate = true }) => {
+const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, isLast, isParticipant, borrower, showDate = true, onClick }) => {
     const router = useRouter();
 
     // Format date specifically: e.g., "5.1"
@@ -48,7 +49,11 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, isLast, isParticipan
 
     const handleClick = () => {
         if (!isDragging && !isDeleteModalOpen) {
-            router.push('/test');
+            if (onClick) {
+                onClick();
+            } else {
+                router.push('/test');
+            }
         }
     };
 

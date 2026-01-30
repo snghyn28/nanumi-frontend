@@ -76,14 +76,14 @@ const OneMNMode: React.FC<OneMNModeProps> = ({
         <div className="space-y-6">
             {/* Payer Selection Section */}
             <MemberDropdown
-                label="누가 지불했나요?"
+                label="누가 결제했나요?"
                 selected={selectedPayer}
                 onSelect={setSelectedPayer}
             />
 
             {/* Amount Section */}
             <div>
-                <label className="text-sm font-medium text-gray-500 ml-1">얼마를 지불했나요?</label>
+                <label className="text-sm font-medium text-gray-500 ml-1">얼마를 결제했나요?</label>
                 <div className="flex items-end gap-3 border-b-2 border-gray-100 pb-2 transition-colors focus-within:border-gray-800 mt-2">
                     {/* Custom Styled Dropdown */}
                     <div className="relative" ref={dropdownRef}>

@@ -6,39 +6,62 @@ import AdvancedSettings from './AdvancedSettings';
 interface LoanModeProps {
     amount: string;
     onAmountChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    lender: Participant;
+    onLenderChange: (participant: Participant) => void;
+    borrower: Participant;
+    onBorrowerChange: (participant: Participant) => void;
+    date: string;
+    onDateChange: (date: string) => void;
+    readOnly?: boolean;
+    labels?: {
+        lender?: string;
+        borrower?: string;
+        amount?: string;
+    };
 }
 
-const LoanMode: React.FC<LoanModeProps> = ({ amount, onAmountChange }) => {
-    // Dropdown States
-    const [lender, setLender] = useState<Participant>(PARTICIPANTS[0]);
-    const [borrower, setBorrower] = useState<Participant>(PARTICIPANTS[1]);
-
-    // Initialize with current date-time in local ISO format
-    const [expenseDate, setExpenseDate] = useState(() => {
-        const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        return now.toISOString().slice(0, 16);
-    });
+const LoanMode: React.FC<LoanModeProps> = ({
+    amount,
+    onAmountChange,
+    lender,
+    onLenderChange,
+    borrower,
+    onBorrowerChange,
+    date,
+    onDateChange,
+    readOnly = false,
+    labels
+}) => {
+    // Helper to format date for display
+    const getFormattedDate = (isoString: string) => {
+        const dateObj = new Date(isoString);
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        return `${year}. ${month}. ${day}`;
+    };
 
     return (
         <div className="space-y-6">
             {/* Lender Selection */}
             <MemberDropdown
-                label="누가 빌려줬나요?"
+                label={labels?.lender || "누가 빌려줬나요?"}
                 selected={lender}
-                onSelect={setLender}
+                onSelect={onLenderChange}
+                readOnly={readOnly}
             />
 
             {/* Borrower Selection */}
             <MemberDropdown
-                label="누구에게 빌려줬나요?"
+                label={labels?.borrower || "누구에게 빌려줬나요?"}
                 selected={borrower}
-                onSelect={setBorrower}
+                onSelect={onBorrowerChange}
+                readOnly={readOnly}
             />
 
             {/* Amount Section */}
             <div>
-                <label className="text-sm font-medium text-gray-500 ml-1">얼마를 빌려줬나요?</label>
+                <label className="text-sm font-medium text-gray-500 ml-1">{labels?.amount || "얼마를 빌려줬나요?"}</label>
                 <div className="flex items-end gap-3 border-b-2 border-gray-100 pb-2 transition-colors focus-within:border-gray-800 mt-2">
                     {/* Amount Input */}
                     <div className="flex-1 flex items-center justify-end gap-1">
@@ -47,19 +70,27 @@ const LoanMode: React.FC<LoanModeProps> = ({ amount, onAmountChange }) => {
                             inputMode="numeric"
                             value={amount}
                             onChange={onAmountChange}
+                            readOnly={readOnly}
                             placeholder="0"
-                            className="w-full bg-transparent text-right text-3xl font-bold text-gray-900 placeholder-gray-200 focus:outline-none"
+                            className={`w-full bg-transparent text-right text-3xl font-bold text-gray-900 placeholder-gray-200 focus:outline-none ${readOnly ? 'cursor-default' : ''}`}
                         />
                         <span className={`text-xl font-bold mb-1 ${amount ? 'text-gray-900' : 'text-gray-300'}`}>원</span>
                     </div>
                 </div>
             </div>
 
-            {/* Advanced Settings Section */}
-            <AdvancedSettings
-                date={expenseDate}
-                onDateChange={setExpenseDate}
-            />
+            {/* Advanced Settings Section handled by readOnly */}
+            {readOnly ? (
+                <div className="flex items-center justify-between px-1">
+                    <span className="text-sm font-medium text-gray-500">날짜</span>
+                    <span className="text-base font-semibold text-gray-900">{getFormattedDate(date)}</span>
+                </div>
+            ) : (
+                <AdvancedSettings
+                    date={date}
+                    onDateChange={onDateChange}
+                />
+            )}
         </div>
     );
 };

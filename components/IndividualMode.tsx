@@ -3,18 +3,30 @@ import { PARTICIPANTS, Participant } from '../data/mockData';
 import MemberDropdown from './MemberDropdown';
 import AdvancedSettings from './AdvancedSettings';
 
-const IndividualMode: React.FC = () => {
-    // Amounts state: keys are participant IDs, values are string amounts
-    const [amounts, setAmounts] = useState<Record<string, string>>({});
-    const [selectedPayer, setSelectedPayer] = useState<Participant>(PARTICIPANTS[0]);
+interface IndividualModeProps {
+    amounts: Record<string, string>;
+    onAmountsChange: (amounts: Record<string, string>) => void;
+    payer: Participant;
+    onPayerChange: (participant: Participant) => void;
+    date: string;
+    onDateChange: (date: string) => void;
+    readOnly?: boolean;
+    labels?: {
+        payer?: string;
+        amountLabel?: string;
+    };
+}
 
-    // Initialize with current date-time in local ISO format
-    const [expenseDate, setExpenseDate] = useState(() => {
-        const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        return now.toISOString().slice(0, 16);
-    });
-
+const IndividualMode: React.FC<IndividualModeProps> = ({
+    amounts,
+    onAmountsChange,
+    payer,
+    onPayerChange,
+    date,
+    onDateChange,
+    readOnly = false,
+    labels
+}) => {
     // Calculate total amount from all entered amounts
     const totalAmount = Object.values(amounts)
         .reduce((sum, amount) => sum + (Number(amount.replace(/[^0-9]/g, '')) || 0), 0);
@@ -24,23 +36,33 @@ const IndividualMode: React.FC = () => {
     const handleAmountChange = (id: string, value: string) => {
         const numericValue = value.replace(/[^0-9]/g, '');
         const formattedValue = numericValue ? Number(numericValue).toLocaleString() : '';
-        setAmounts(prev => ({ ...prev, [id]: formattedValue }));
+        onAmountsChange({ ...amounts, [id]: formattedValue });
+    };
+
+    // Helper to format date for display
+    const getFormattedDate = (isoString: string) => {
+        const dateObj = new Date(isoString);
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        return `${year}. ${month}. ${day}`;
     };
 
     return (
         <div className="space-y-6">
             {/* Payer Selection Section */}
             <MemberDropdown
-                label="누가 지불했나요?"
-                selected={selectedPayer}
-                onSelect={setSelectedPayer}
+                label={labels?.payer || "누가 결제했나요?"}
+                selected={payer}
+                onSelect={onPayerChange}
+                readOnly={readOnly}
             />
 
             <div className="space-y-3">
                 {/* Individual Amount Input Section */}
                 <div className="space-y-3">
                     <div className="flex items-center justify-between ml-1">
-                        <label className="text-sm font-medium text-gray-500">각자 얼마를 계산하나요?</label>
+                        <label className="text-sm font-medium text-gray-500">{labels?.amountLabel || "각자 얼마를 계산하나요?"}</label>
                     </div>
 
                     <div className="bg-gray-50 rounded-2xl p-2 flex flex-col">
@@ -52,7 +74,7 @@ const IndividualMode: React.FC = () => {
                                 return (
                                     <div
                                         key={person.id}
-                                        className={`w-full flex items-center justify-between p-3 rounded-xl transition-all ${hasAmount ? 'bg-white shadow-sm' : 'hover:bg-white/50'}`}
+                                        className={`w-full flex items-center justify-between p-3 rounded-xl transition-all ${hasAmount ? 'bg-white shadow-sm' : readOnly ? '' : 'hover:bg-white/50'} ${readOnly && !hasAmount ? 'opacity-50' : ''}`}
                                     >
                                         <div className="flex items-center gap-3 flex-1">
                                             <span className={`font-medium ${hasAmount ? 'text-gray-900' : 'text-gray-500'}`}>
@@ -68,7 +90,8 @@ const IndividualMode: React.FC = () => {
                                                     placeholder="0"
                                                     value={amount}
                                                     onChange={(e) => handleAmountChange(person.id, e.target.value)}
-                                                    className={`w-full text-right text-lg font-bold bg-transparent border-b border-gray-200 focus:border-blue-500 py-1 pr-6 focus:outline-none transition-all ${hasAmount ? 'text-gray-900' : 'text-gray-400'}`}
+                                                    readOnly={readOnly}
+                                                    className={`w-full text-right text-lg font-bold bg-transparent border-b border-gray-200 focus:border-blue-500 py-1 pr-6 focus:outline-none transition-all ${hasAmount ? 'text-gray-900' : 'text-gray-400'} ${readOnly ? 'cursor-default border-none' : ''}`}
                                                 />
                                                 <span className={`absolute right-0 top-1/2 -translate-y-1/2 font-bold text-sm pointer-events-none ${hasAmount ? 'text-gray-900' : 'text-gray-400'}`}>원</span>
                                             </div>
@@ -97,11 +120,18 @@ const IndividualMode: React.FC = () => {
                 </div>
             </div>
 
-            {/* Advanced Settings Section */}
-            <AdvancedSettings
-                date={expenseDate}
-                onDateChange={setExpenseDate}
-            />
+            {/* Advanced Settings Section handled by readOnly */}
+            {readOnly ? (
+                <div className="flex items-center justify-between px-1">
+                    <span className="text-sm font-medium text-gray-500">날짜</span>
+                    <span className="text-base font-semibold text-gray-900">{getFormattedDate(date)}</span>
+                </div>
+            ) : (
+                <AdvancedSettings
+                    date={date}
+                    onDateChange={onDateChange}
+                />
+            )}
         </div>
     );
 };

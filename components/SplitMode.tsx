@@ -9,50 +9,54 @@ interface SplitModeProps {
     onAmountChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     amountType: 'total' | 'perPerson';
     onAmountTypeChange: (type: 'total' | 'perPerson') => void;
+    payer: Participant;
+    onPayerChange: (participant: Participant) => void;
+    selectedParticipantIds: string[];
+    onParticipantsChange: (ids: string[]) => void;
+    date: string;
+    onDateChange: (date: string) => void;
+    readOnly?: boolean;
+    labels?: {
+        payer?: string;
+        amount?: string;
+    };
 }
 
 const SplitMode: React.FC<SplitModeProps> = ({
     amount,
     onAmountChange,
     amountType,
-    onAmountTypeChange
+    onAmountTypeChange,
+    payer,
+    onPayerChange,
+    selectedParticipantIds,
+    onParticipantsChange,
+    date,
+    onDateChange,
+    readOnly = false,
+    labels
 }) => {
     // Amount Type Dropdown State
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    // Payer Dropdown State
-    const [selectedPayer, setSelectedPayer] = useState<Participant>(PARTICIPANTS[0]);
-
-    // Participant Checklist State
-    const [selectedParticipantIds, setSelectedParticipantIds] = useState<string[]>(
-        PARTICIPANTS.map(p => p.id)
-    );
-
     const toggleSelectAll = () => {
+        if (readOnly) return;
         if (selectedParticipantIds.length === PARTICIPANTS.length) {
-            setSelectedParticipantIds([]);
+            onParticipantsChange([]);
         } else {
-            setSelectedParticipantIds(PARTICIPANTS.map(p => p.id));
+            onParticipantsChange(PARTICIPANTS.map(p => p.id));
         }
     };
 
     const toggleParticipant = (id: string) => {
+        if (readOnly) return;
         if (selectedParticipantIds.includes(id)) {
-            setSelectedParticipantIds(prev => prev.filter(pId => pId !== id));
+            onParticipantsChange(selectedParticipantIds.filter(pId => pId !== id));
         } else {
-            setSelectedParticipantIds(prev => [...prev, id]);
+            onParticipantsChange([...selectedParticipantIds, id]);
         }
     };
-
-
-
-    // Initialize with current date-time in local ISO format (required for datetime-local input)
-    const [expenseDate, setExpenseDate] = useState(() => {
-        const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        return now.toISOString().slice(0, 16);
-    });
 
     // Close dropdowns when clicking outside
     useEffect(() => {
@@ -72,33 +76,46 @@ const SplitMode: React.FC<SplitModeProps> = ({
 
     const selectedLabel = options.find(opt => opt.value === amountType)?.label;
 
+    // Helper to format date for display
+    const getFormattedDate = (isoString: string) => {
+        const dateObj = new Date(isoString);
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        return `${year}. ${month}. ${day}`;
+    };
+
     return (
         <div className="space-y-6">
             {/* Payer Selection Section */}
             <MemberDropdown
-                label="누가 지불했나요?"
-                selected={selectedPayer}
-                onSelect={setSelectedPayer}
+                label={labels?.payer || "누가 결제했나요?"}
+                selected={payer}
+                onSelect={onPayerChange}
+                readOnly={readOnly}
             />
 
             {/* Amount Section */}
             <div>
-                <label className="text-sm font-medium text-gray-500 ml-1">얼마를 지불했나요?</label>
+                <label className="text-sm font-medium text-gray-500 ml-1">{labels?.amount || "얼마를 결제했나요?"}</label>
                 <div className="flex items-end gap-3 border-b-2 border-gray-100 pb-2 transition-colors focus-within:border-gray-800 mt-2">
                     {/* Custom Styled Dropdown */}
                     <div className="relative" ref={dropdownRef}>
                         <button
-                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                            className="flex items-center gap-2 pl-3 pr-2 py-1.5 rounded-full hover:bg-gray-50 transition-colors group"
+                            onClick={() => !readOnly && setIsDropdownOpen(!isDropdownOpen)}
+                            disabled={readOnly}
+                            className={`flex items-center gap-2 pl-3 pr-2 py-1.5 rounded-full transition-colors group ${readOnly ? 'cursor-default' : 'hover:bg-gray-50'}`}
                         >
                             <span className="text-xl font-bold text-gray-900 leading-none pb-0.5">
                                 {selectedLabel}
                             </span>
-                            <div className={`text-gray-400 group-hover:text-gray-600 transition-colors duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}>
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
-                                    <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
-                                </svg>
-                            </div>
+                            {!readOnly && (
+                                <div className={`text-gray-400 group-hover:text-gray-600 transition-colors duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+                                        <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+                                    </svg>
+                                </div>
+                            )}
                         </button>
 
                         <AnimatePresence>
@@ -139,8 +156,9 @@ const SplitMode: React.FC<SplitModeProps> = ({
                             inputMode="numeric"
                             value={amount}
                             onChange={onAmountChange}
+                            readOnly={readOnly}
                             placeholder="0"
-                            className="w-full bg-transparent text-right text-3xl font-bold text-gray-900 placeholder-gray-200 focus:outline-none"
+                            className={`w-full bg-transparent text-right text-3xl font-bold text-gray-900 placeholder-gray-200 focus:outline-none ${readOnly ? 'cursor-default' : ''}`}
                         />
                         <span className={`text-xl font-bold mb-1 ${amount ? 'text-gray-900' : 'text-gray-300'}`}>원</span>
                     </div>
@@ -151,12 +169,14 @@ const SplitMode: React.FC<SplitModeProps> = ({
             <div className="space-y-3">
                 <div className="flex items-center justify-between ml-1">
                     <label className="text-sm font-medium text-gray-500">함께한 멤버</label>
-                    <button
-                        onClick={toggleSelectAll}
-                        className="text-xs font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-full transition-colors"
-                    >
-                        {selectedParticipantIds.length === PARTICIPANTS.length ? '선택 해제' : '모두 선택'}
-                    </button>
+                    {!readOnly && (
+                        <button
+                            onClick={toggleSelectAll}
+                            className="text-xs font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-full transition-colors"
+                        >
+                            {selectedParticipantIds.length === PARTICIPANTS.length ? '선택 해제' : '모두 선택'}
+                        </button>
+                    )}
                 </div>
 
                 <div className="bg-gray-50 rounded-2xl p-2 flex flex-col gap-2">
@@ -166,8 +186,8 @@ const SplitMode: React.FC<SplitModeProps> = ({
                             <button
                                 key={person.id}
                                 onClick={() => toggleParticipant(person.id)}
-                                className={`w-full flex items-center justify-between p-3 rounded-xl transition-all ${isSelected ? 'bg-white shadow-sm' : 'hover:bg-white/50'
-                                    }`}
+                                disabled={readOnly}
+                                className={`w-full flex items-center justify-between p-3 rounded-xl transition-all ${isSelected ? 'bg-white shadow-sm' : readOnly ? '' : 'hover:bg-white/50'} ${readOnly && !isSelected ? 'opacity-50' : ''}`}
                             >
                                 <span className={`font-medium ${isSelected ? 'text-gray-900' : 'text-gray-400'}`}>
                                     {person.name}
@@ -187,11 +207,19 @@ const SplitMode: React.FC<SplitModeProps> = ({
                     })}
                 </div>
             </div>
-            {/* Advanced Settings Section */}
-            <AdvancedSettings
-                date={expenseDate}
-                onDateChange={setExpenseDate}
-            />
+
+            {/* Advanced Settings Section handled by readOnly */}
+            {readOnly ? (
+                <div className="flex items-center justify-between px-1">
+                    <span className="text-sm font-medium text-gray-500">날짜</span>
+                    <span className="text-base font-semibold text-gray-900">{getFormattedDate(date)}</span>
+                </div>
+            ) : (
+                <AdvancedSettings
+                    date={date}
+                    onDateChange={onDateChange}
+                />
+            )}
         </div>
     );
 };

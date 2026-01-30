@@ -4,9 +4,10 @@ import ExpenseCard from './ExpenseCard';
 
 interface ExpenseListProps {
     expenses: Expense[];
+    onExpenseClick: (id: string) => void;
 }
 
-const ExpenseList: React.FC<ExpenseListProps> = ({ expenses }) => {
+const ExpenseList: React.FC<ExpenseListProps> = ({ expenses, onExpenseClick }) => {
     const sortedExpenses = [...expenses].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     return (
@@ -25,6 +26,7 @@ const ExpenseList: React.FC<ExpenseListProps> = ({ expenses }) => {
                             isParticipant={expense.isParticipant}
                             borrower={expense.borrower}
                             showDate={isNewDate}
+                            onClick={() => onExpenseClick(expense.id)}
                         />
                     );
                 })}

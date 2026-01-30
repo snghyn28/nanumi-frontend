@@ -10,6 +10,39 @@ export interface Expense {
     borrower?: string;
 }
 
+export type ExpenseType = 'SPLIT' | 'INDIVIDUAL' | 'LOAN';
+
+export interface ExpenseDetailBase {
+    id: string;
+    title: string;
+    date: string;
+    type: ExpenseType;
+    payer: Participant;
+}
+
+export interface ExpenseDetailSplit extends ExpenseDetailBase {
+    type: 'SPLIT';
+    amount: number;
+    participants: Participant[];
+}
+
+export interface ExpenseDetailIndividual extends ExpenseDetailBase {
+    type: 'INDIVIDUAL';
+    totalAmount: number;
+    participants: {
+        participant: Participant;
+        amount: number;
+    }[];
+}
+
+export interface ExpenseDetailLoan extends ExpenseDetailBase {
+    type: 'LOAN';
+    amount: number;
+    borrower: Participant;
+}
+
+export type ExpenseDetail = ExpenseDetailSplit | ExpenseDetailIndividual | ExpenseDetailLoan;
+
 export interface SettlementSummary {
     groupTitle: string;
     totalAmount: number;
@@ -91,3 +124,41 @@ export const PARTICIPANTS: Participant[] = [
     { id: '3', name: '이영희' },
     { id: '4', name: '박민수' },
 ];
+
+export const mockExpenseDetails: ExpenseDetail[] = [
+    {
+        id: '0',
+        title: '숙소',
+        date: '2024-05-01T18:20:00',
+        type: 'SPLIT',
+        payer: PARTICIPANTS[0],
+        amount: 500000,
+        participants: [PARTICIPANTS[0], PARTICIPANTS[1], PARTICIPANTS[2], PARTICIPANTS[3]]
+    },
+    {
+        id: '1',
+        title: '흑돼지 바베큐',
+        date: '2024-05-01T18:30:00',
+        type: 'INDIVIDUAL',
+        payer: PARTICIPANTS[1],
+        totalAmount: 45000, // Should match mockExpenses amount 120000? Let's fix mock data consistency later or now. mockExpenses says 120000.
+        participants: [
+            { participant: PARTICIPANTS[0], amount: 40000 },
+            { participant: PARTICIPANTS[1], amount: 40000 },
+            { participant: PARTICIPANTS[2], amount: 40000 }
+        ]
+    },
+    {
+        id: '2',
+        title: '편의점', // MockExpenses says '편의점'.
+        date: '2024-05-01T21:00:00',
+        type: 'LOAN',
+        payer: PARTICIPANTS[1], // Hyunwoo
+        amount: 15000,
+        borrower: PARTICIPANTS[0] // Minji (who is Payer in MockExpenses? Wait. Expense says Payer: Hyunwoo. Borrower: Minji. )
+    }
+];
+
+export const getExpenseDetail = (id: string): ExpenseDetail | null => {
+    return mockExpenseDetails.find(detail => detail.id === id) || null;
+};

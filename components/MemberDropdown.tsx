@@ -6,9 +6,10 @@ interface MemberDropdownProps {
     label: string;
     selected: Participant;
     onSelect: (participant: Participant) => void;
+    readOnly?: boolean;
 }
 
-const MemberDropdown: React.FC<MemberDropdownProps> = ({ label, selected, onSelect }) => {
+const MemberDropdown: React.FC<MemberDropdownProps> = ({ label, selected, onSelect, readOnly = false }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -28,17 +29,20 @@ const MemberDropdown: React.FC<MemberDropdownProps> = ({ label, selected, onSele
             <label className="text-sm font-medium text-gray-500 ml-1">{label}</label>
             <div className="relative" ref={dropdownRef}>
                 <button
-                    onClick={() => setIsOpen(!isOpen)}
-                    className="w-full flex items-center justify-between bg-gray-50 hover:bg-gray-100 p-4 rounded-2xl transition-colors group text-left"
+                    onClick={() => !readOnly && setIsOpen(!isOpen)}
+                    disabled={readOnly}
+                    className={`w-full flex items-center justify-between bg-gray-50 p-4 rounded-2xl transition-colors group text-left ${readOnly ? 'cursor-default' : 'hover:bg-gray-100'}`}
                 >
                     <div className="flex items-center gap-3">
                         <span className="text-lg font-bold text-gray-900 ml-1">{selected.name}</span>
                     </div>
-                    <div className={`text-gray-400 group-hover:text-gray-600 transition-colors duration-200 ${isOpen ? 'rotate-180' : ''}`}>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
-                            <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
-                        </svg>
-                    </div>
+                    {!readOnly && (
+                        <div className={`text-gray-400 group-hover:text-gray-600 transition-colors duration-200 ${isOpen ? 'rotate-180' : ''}`}>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+                                <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+                            </svg>
+                        </div>
+                    )}
                 </button>
 
                 <AnimatePresence>
