@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import OneMNMode from './OneMNMode';
+import SplitMode from './SplitMode';
 import IndividualMode from './IndividualMode';
 import LoanMode from './LoanMode';
 
@@ -25,7 +25,7 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose }) =>
         switch (selectedTab) {
             case '1/N':
                 return (
-                    <OneMNMode
+                    <SplitMode
                         amount={amount}
                         onAmountChange={handleAmountChange}
                         amountType={amountType}
