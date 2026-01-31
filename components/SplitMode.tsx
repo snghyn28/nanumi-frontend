@@ -1,12 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-
+import { PARTICIPANTS } from '../data/mockData';
 import { Participant } from '@/types';
-import MemberDropdown from '../MemberDropdown';
-import AdvancedSettings from '../AdvancedSettings';
+import MemberDropdown from './MemberDropdown';
+import AdvancedSettings from './AdvancedSettings';
 
 interface SplitModeProps {
-    participants: Participant[];
     amount: string;
     onAmountChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     amountType: 'total' | 'perPerson';
@@ -22,11 +21,9 @@ interface SplitModeProps {
         payer?: string;
         amount?: string;
     };
-    myId?: string;
 }
 
 const SplitMode: React.FC<SplitModeProps> = ({
-    participants,
     amount,
     onAmountChange,
     amountType,
@@ -38,8 +35,7 @@ const SplitMode: React.FC<SplitModeProps> = ({
     date,
     onDateChange,
     readOnly = false,
-    labels,
-    myId
+    labels
 }) => {
     // Amount Type Dropdown State
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -47,10 +43,10 @@ const SplitMode: React.FC<SplitModeProps> = ({
 
     const toggleSelectAll = () => {
         if (readOnly) return;
-        if (selectedParticipantIds.length === participants.length) {
+        if (selectedParticipantIds.length === PARTICIPANTS.length) {
             onParticipantsChange([]);
         } else {
-            onParticipantsChange(participants.map(p => p.id));
+            onParticipantsChange(PARTICIPANTS.map(p => p.id));
         }
     };
 
@@ -98,8 +94,7 @@ const SplitMode: React.FC<SplitModeProps> = ({
                 selected={payer}
                 onSelect={onPayerChange}
                 readOnly={readOnly}
-                participants={participants}
-                myId={myId}
+                participants={PARTICIPANTS}
             />
 
             {/* Amount Section */}
@@ -181,13 +176,13 @@ const SplitMode: React.FC<SplitModeProps> = ({
                             onClick={toggleSelectAll}
                             className="text-xs font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-full transition-colors"
                         >
-                            {selectedParticipantIds.length === participants.length ? '선택 해제' : '모두 선택'}
+                            {selectedParticipantIds.length === PARTICIPANTS.length ? '선택 해제' : '모두 선택'}
                         </button>
                     )}
                 </div>
 
                 <div className="bg-gray-50 rounded-2xl p-2 flex flex-col gap-2">
-                    {participants.map((person) => {
+                    {PARTICIPANTS.map((person) => {
                         const isSelected = selectedParticipantIds.includes(person.id);
                         return (
                             <button
@@ -196,14 +191,9 @@ const SplitMode: React.FC<SplitModeProps> = ({
                                 disabled={readOnly}
                                 className={`w-full flex items-center justify-between p-3 rounded-xl transition-all ${isSelected ? 'bg-white shadow-sm' : readOnly ? '' : 'hover:bg-white/50'} ${readOnly && !isSelected ? 'opacity-50' : ''}`}
                             >
-                                <div className="flex items-center gap-2">
-                                    <span className={`font-medium ${isSelected ? 'text-gray-900' : 'text-gray-400'}`}>
-                                        {person.name}
-                                    </span>
-                                    {myId === person.id && (
-                                        <span className="text-[10px] font-bold text-blue-500 bg-blue-50 px-1.5 py-0.5 rounded-md whitespace-nowrap">나</span>
-                                    )}
-                                </div>
+                                <span className={`font-medium ${isSelected ? 'text-gray-900' : 'text-gray-400'}`}>
+                                    {person.name}
+                                </span>
                                 <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected
                                     ? 'bg-blue-500 border-blue-500'
                                     : 'border-gray-300'

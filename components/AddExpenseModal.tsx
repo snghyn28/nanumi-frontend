@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-
-import { useSettlement } from '@/context/SettlementContext';
-import { Participant } from '@/types';
+import { PARTICIPANTS } from '../data/mockData';
 import SplitMode from './SplitMode';
 import IndividualMode from './IndividualMode';
 import LoanMode from './LoanMode';
@@ -15,7 +13,6 @@ interface AddExpenseModalProps {
 const TABS = ['1/N', '각자 분담', '대여'];
 
 const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose }) => {
-    const { participants, myId } = useSettlement();
     const [selectedTab, setSelectedTab] = useState(TABS[0]);
     const [title, setTitle] = useState('');
     const [amount, setAmount] = useState('');
@@ -29,37 +26,15 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose }) =>
     });
 
     // Split Mode State
-    // We need to initialize state based on participants, but hooks cannot be conditional or dependent on changing props in a way that breaks rules.
-    // However, participants come from context.
-    const [selectedPayer, setSelectedPayer] = useState<Participant | null>(null);
-
-    // Initialize defaults when participants load or modal opens? 
-    // For simplicity, we can default to participants[0] if available during render, or handle null.
-    // But useState(participants[0]) only runs once. If participants are empty initially?
-    // Let's assume participants are always loaded or we handle it.
-
-    // Better: use useEffect to set default payer if not set?
-
-    // Actually, let's keep it simple. If participants might change, we should probably derive defaults or use Effects.
-    // But for this refactor, let's stick to simple state, initialized lazily or updated via effect.
-
-    const [selectedParticipantIds, setSelectedParticipantIds] = useState<string[]>([]);
-
-    React.useEffect(() => {
-        if (participants.length > 0 && !selectedPayer) {
-            setSelectedPayer(participants[0]);
-            setSelectedParticipantIds(participants.map(p => p.id));
-            setLender(participants[0]);
-            setBorrower(participants[1] || participants[0]);
-        }
-    }, [participants]);
+    const [selectedPayer, setSelectedPayer] = useState(PARTICIPANTS[0]); // Default payer
+    const [selectedParticipantIds, setSelectedParticipantIds] = useState<string[]>(PARTICIPANTS.map(p => p.id));
 
     // Individual Mode State
     const [individualAmounts, setIndividualAmounts] = useState<Record<string, string>>({});
 
     // Loan Mode State
-    const [lender, setLender] = useState<Participant | null>(null);
-    const [borrower, setBorrower] = useState<Participant | null>(null);
+    const [lender, setLender] = useState(PARTICIPANTS[0]);
+    const [borrower, setBorrower] = useState(PARTICIPANTS[1]);
 
 
     const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,53 +42,45 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose }) =>
         setAmount(value ? Number(value).toLocaleString() : '');
     };
 
-    if (!selectedPayer || !lender || !borrower) return null; // Wait for initialization
-
     const renderModeContent = () => {
         switch (selectedTab) {
             case '1/N':
                 return (
                     <SplitMode
-                        participants={participants}
                         amount={amount}
                         onAmountChange={handleAmountChange}
                         amountType={amountType}
                         onAmountTypeChange={setAmountType}
-                        payer={selectedPayer!}
+                        payer={selectedPayer}
                         onPayerChange={setSelectedPayer}
                         selectedParticipantIds={selectedParticipantIds}
                         onParticipantsChange={setSelectedParticipantIds}
                         date={date}
                         onDateChange={setDate}
-                        myId={myId}
                     />
                 );
             case '각자 분담':
                 return (
                     <IndividualMode
-                        participants={participants}
                         amounts={individualAmounts}
                         onAmountsChange={setIndividualAmounts}
-                        payer={selectedPayer!}
+                        payer={selectedPayer}
                         onPayerChange={setSelectedPayer}
                         date={date}
                         onDateChange={setDate}
-                        myId={myId}
                     />
                 );
             case '대여':
                 return (
                     <LoanMode
-                        participants={participants}
                         amount={amount}
                         onAmountChange={handleAmountChange}
-                        lender={lender!}
+                        lender={lender}
                         onLenderChange={setLender}
-                        borrower={borrower!}
+                        borrower={borrower}
                         onBorrowerChange={setBorrower}
                         date={date}
                         onDateChange={setDate}
-                        myId={myId}
                     />
                 );
             default:

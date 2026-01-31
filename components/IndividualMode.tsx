@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-
+import { PARTICIPANTS } from '../data/mockData';
 import { Participant } from '@/types';
-import MemberDropdown from '../MemberDropdown';
-import AdvancedSettings from '../AdvancedSettings';
+import MemberDropdown from './MemberDropdown';
+import AdvancedSettings from './AdvancedSettings';
 
 interface IndividualModeProps {
-    participants: Participant[];
     amounts: Record<string, string>;
     onAmountsChange: (amounts: Record<string, string>) => void;
     payer: Participant;
@@ -17,11 +16,9 @@ interface IndividualModeProps {
         payer?: string;
         amountLabel?: string;
     };
-    myId?: string;
 }
 
 const IndividualMode: React.FC<IndividualModeProps> = ({
-    participants,
     amounts,
     onAmountsChange,
     payer,
@@ -29,8 +26,7 @@ const IndividualMode: React.FC<IndividualModeProps> = ({
     date,
     onDateChange,
     readOnly = false,
-    labels,
-    myId
+    labels
 }) => {
     // Calculate total amount from all entered amounts
     const totalAmount = Object.values(amounts)
@@ -61,8 +57,7 @@ const IndividualMode: React.FC<IndividualModeProps> = ({
                 selected={payer}
                 onSelect={onPayerChange}
                 readOnly={readOnly}
-                participants={participants}
-                myId={myId}
+                participants={PARTICIPANTS}
             />
 
             <div className="space-y-3">
@@ -74,7 +69,7 @@ const IndividualMode: React.FC<IndividualModeProps> = ({
 
                     <div className="bg-gray-50 rounded-2xl p-2 flex flex-col">
                         <div className="flex flex-col gap-2">
-                            {participants.map((person) => {
+                            {PARTICIPANTS.map((person) => {
                                 const amount = amounts[person.id] || '';
                                 const hasAmount = amount.length > 0;
 
@@ -87,9 +82,6 @@ const IndividualMode: React.FC<IndividualModeProps> = ({
                                             <span className={`font-medium ${hasAmount ? 'text-gray-900' : 'text-gray-500'}`}>
                                                 {person.name}
                                             </span>
-                                            {myId === person.id && (
-                                                <span className="text-[10px] font-bold text-blue-500 bg-blue-50 px-1.5 py-0.5 rounded-md whitespace-nowrap">나</span>
-                                            )}
                                         </div>
 
                                         <div className="flex items-center gap-2 justify-end">
@@ -131,20 +123,18 @@ const IndividualMode: React.FC<IndividualModeProps> = ({
             </div>
 
             {/* Advanced Settings Section handled by readOnly */}
-            {
-                readOnly ? (
-                    <div className="flex items-center justify-between px-1">
-                        <span className="text-sm font-medium text-gray-500">날짜</span>
-                        <span className="text-base font-semibold text-gray-900">{getFormattedDate(date)}</span>
-                    </div>
-                ) : (
-                    <AdvancedSettings
-                        date={date}
-                        onDateChange={onDateChange}
-                    />
-                )
-            }
-        </div >
+            {readOnly ? (
+                <div className="flex items-center justify-between px-1">
+                    <span className="text-sm font-medium text-gray-500">날짜</span>
+                    <span className="text-base font-semibold text-gray-900">{getFormattedDate(date)}</span>
+                </div>
+            ) : (
+                <AdvancedSettings
+                    date={date}
+                    onDateChange={onDateChange}
+                />
+            )}
+        </div>
     );
 };
 

@@ -1,13 +1,14 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-interface DeleteModalProps {
+interface MemberDeleteModalProps {
     isOpen: boolean;
     onClose: () => void;
     onConfirm: () => void;
+    memberName: string;
 }
 
-const DeleteModal: React.FC<DeleteModalProps> = ({ isOpen, onClose, onConfirm }) => {
+const MemberDeleteModal: React.FC<MemberDeleteModalProps> = ({ isOpen, onClose, onConfirm, memberName }) => {
     return (
         <AnimatePresence>
             {isOpen && (
@@ -28,9 +29,10 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ isOpen, onClose, onConfirm })
                             onClick={(e) => e.stopPropagation()}
                             className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl"
                         >
-                            <h3 className="text-lg font-bold text-gray-900 mb-2">지출을 삭제하시겠습니까?</h3>
+                            <h3 className="text-lg font-bold text-gray-900 mb-2">{memberName}님을 삭제하시겠습니까?</h3>
                             <p className="text-gray-500 text-sm mb-6">
-                                이 작업은 되돌릴 수 없습니다.
+                                이 멤버와 관련된 정산 내역이 있다면 문제가 생길 수 있습니다.<br />
+                                정말 삭제하시겠습니까?
                             </p>
                             <div className="flex gap-3">
                                 <button
@@ -54,4 +56,4 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ isOpen, onClose, onConfirm })
     );
 };
 
-export default DeleteModal;
+export default MemberDeleteModal;

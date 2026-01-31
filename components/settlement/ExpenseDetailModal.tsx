@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ExpenseDetail, Participant } from '@/types';
-import { PARTICIPANTS } from '../../data/mockData';
+import { useSettlement } from '@/context/SettlementContext';
 import SplitMode from './SplitMode';
 import IndividualMode from './IndividualMode';
 import LoanMode from './LoanMode';
-import DeleteModal from '../DeleteModal';
+import ExpenseDeleteModal from '../ExpenseDeleteModal';
 
 interface ExpenseDetailModalProps {
     isOpen: boolean;
@@ -16,6 +16,7 @@ interface ExpenseDetailModalProps {
 const TABS = ['1/N', '각자 분담', '대여'];
 
 const ExpenseDetailModal: React.FC<ExpenseDetailModalProps> = ({ isOpen, onClose, expenseDetail }) => {
+    const { participants, myId } = useSettlement();
     const [isEditing, setIsEditing] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -24,11 +25,11 @@ const ExpenseDetailModal: React.FC<ExpenseDetailModalProps> = ({ isOpen, onClose
     const [amount, setAmount] = useState('');
     const [amountType, setAmountType] = useState<'total' | 'perPerson'>('total');
     const [date, setDate] = useState('');
-    const [payer, setPayer] = useState<Participant>(PARTICIPANTS[0]);
+    const [payer, setPayer] = useState<Participant | null>(null);
     const [selectedParticipantIds, setSelectedParticipantIds] = useState<string[]>([]);
     const [individualAmounts, setIndividualAmounts] = useState<Record<string, string>>({});
     const [selectedTab, setSelectedTab] = useState(TABS[0]);
-    const [borrower, setBorrower] = useState<Participant>(PARTICIPANTS[1]);
+    const [borrower, setBorrower] = useState<Participant | null>(null);
 
     // Initialize state when expenseDetail changes
     useEffect(() => {
@@ -44,7 +45,7 @@ const ExpenseDetailModal: React.FC<ExpenseDetailModalProps> = ({ isOpen, onClose
                 setAmountType('total'); // Default to total for now
             } else if (expenseDetail.type === 'INDIVIDUAL') {
                 const amounts: Record<string, string> = {};
-                expenseDetail.participants.forEach(p => {
+                expenseDetail.participants.forEach((p: { participant: Participant; amount: number }) => {
                     amounts[p.participant.id] = p.amount.toLocaleString();
                 });
                 setIndividualAmounts(amounts);
@@ -115,10 +116,12 @@ const ExpenseDetailModal: React.FC<ExpenseDetailModalProps> = ({ isOpen, onClose
                 </div>
 
                 {(() => {
+                    if (!payer) return null; // Ensure payer is set
                     switch (selectedTab) {
                         case '1/N':
                             return (
                                 <SplitMode
+                                    participants={participants}
                                     amount={amount}
                                     onAmountChange={handleAmountChange}
                                     amountType={amountType}
@@ -134,11 +137,13 @@ const ExpenseDetailModal: React.FC<ExpenseDetailModalProps> = ({ isOpen, onClose
                                         payer: "결제한 멤버",
                                         amount: "결제한 금액"
                                     }}
+                                    myId={myId}
                                 />
                             );
                         case '각자 분담':
                             return (
                                 <IndividualMode
+                                    participants={participants}
                                     amounts={individualAmounts}
                                     onAmountsChange={setIndividualAmounts}
                                     payer={payer}
@@ -150,16 +155,18 @@ const ExpenseDetailModal: React.FC<ExpenseDetailModalProps> = ({ isOpen, onClose
                                         payer: "결제한 멤버",
                                         amountLabel: "계산한 금액"
                                     }}
+                                    myId={myId}
                                 />
                             );
                         case '대여':
                             return (
                                 <LoanMode
+                                    participants={participants}
                                     amount={amount}
                                     onAmountChange={handleAmountChange}
                                     lender={payer} // payer is lender in base interface
                                     onLenderChange={setPayer}
-                                    borrower={borrower}
+                                    borrower={borrower || participants[0]} // Fallback
                                     onBorrowerChange={setBorrower}
                                     date={date}
                                     onDateChange={setDate}
@@ -169,6 +176,7 @@ const ExpenseDetailModal: React.FC<ExpenseDetailModalProps> = ({ isOpen, onClose
                                         borrower: "빌린 멤버",
                                         amount: "빌려준 금액"
                                     }}
+                                    myId={myId}
                                 />
                             );
                         default:
@@ -260,7 +268,7 @@ const ExpenseDetailModal: React.FC<ExpenseDetailModalProps> = ({ isOpen, onClose
                         </div >
                     </motion.div >
 
-                    <DeleteModal
+                    <ExpenseDeleteModal
                         isOpen={isDeleteModalOpen}
                         onClose={() => setIsDeleteModalOpen(false)}
                         onConfirm={handleDeleteConfirm}

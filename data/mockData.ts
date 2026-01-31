@@ -68,7 +68,7 @@ export const mockExpenses: Expense[] = [
 
 
 export const PARTICIPANTS: Participant[] = [
-    { id: '1', name: '김상현 (나)' },
+    { id: '1', name: '김상현' },
     { id: '2', name: '김철수' },
     { id: '3', name: '이영희' },
     { id: '4', name: '박민수' },

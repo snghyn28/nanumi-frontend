@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PARTICIPANTS } from '../data/mockData';
+
 import { Participant } from '@/types';
 
 interface MemberDropdownProps {
@@ -8,9 +8,11 @@ interface MemberDropdownProps {
     selected: Participant;
     onSelect: (participant: Participant) => void;
     readOnly?: boolean;
+    myId?: string;
+    participants: Participant[];
 }
 
-const MemberDropdown: React.FC<MemberDropdownProps> = ({ label, selected, onSelect, readOnly = false }) => {
+const MemberDropdown: React.FC<MemberDropdownProps> = ({ label, selected, onSelect, readOnly = false, participants, myId }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -36,6 +38,9 @@ const MemberDropdown: React.FC<MemberDropdownProps> = ({ label, selected, onSele
                 >
                     <div className="flex items-center gap-3">
                         <span className="text-lg font-bold text-gray-900 ml-1">{selected.name}</span>
+                        {myId === selected.id && (
+                            <span className="text-xs font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded-md whitespace-nowrap">나</span>
+                        )}
                     </div>
                     {!readOnly && (
                         <div className={`text-gray-400 group-hover:text-gray-600 transition-colors duration-200 ${isOpen ? 'rotate-180' : ''}`}>
@@ -56,14 +61,14 @@ const MemberDropdown: React.FC<MemberDropdownProps> = ({ label, selected, onSele
                             className="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-30"
                         >
                             <div className="p-2 max-h-60 overflow-y-auto flex flex-col gap-1">
-                                {PARTICIPANTS.map((person) => (
+                                {participants.map((person) => (
                                     <button
                                         key={person.id}
                                         onClick={() => {
                                             onSelect(person);
                                             setIsOpen(false);
                                         }}
-                                        className={`w-full flex items-center gap-3 p-3 rounded-xl transition-colors ${selected.id === person.id
+                                        className={`w-full flex items-center gap-1.5 p-3 rounded-xl transition-colors ${selected.id === person.id
                                             ? 'bg-gray-100'
                                             : 'hover:bg-gray-50'
                                             }`}
@@ -71,6 +76,9 @@ const MemberDropdown: React.FC<MemberDropdownProps> = ({ label, selected, onSele
                                         <span className={`font-medium ml-1 ${selected.id === person.id ? 'text-gray-900' : 'text-gray-600'}`}>
                                             {person.name}
                                         </span>
+                                        {myId === person.id && (
+                                            <span className="text-[10px] font-bold text-blue-500 bg-blue-50 px-1.5 py-0.5 rounded-md whitespace-nowrap">나</span>
+                                        )}
                                         {selected.id === person.id && (
                                             <div className="ml-auto text-blue-500">
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">

@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-
+import { PARTICIPANTS } from '../data/mockData';
 import { Participant } from '@/types';
-import MemberDropdown from '../MemberDropdown';
-import AdvancedSettings from '../AdvancedSettings';
+import MemberDropdown from './MemberDropdown';
+import AdvancedSettings from './AdvancedSettings';
 
 interface LoanModeProps {
-    participants: Participant[];
     amount: string;
     onAmountChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     lender: Participant;
@@ -20,11 +19,9 @@ interface LoanModeProps {
         borrower?: string;
         amount?: string;
     };
-    myId?: string;
 }
 
 const LoanMode: React.FC<LoanModeProps> = ({
-    participants,
     amount,
     onAmountChange,
     lender,
@@ -34,8 +31,7 @@ const LoanMode: React.FC<LoanModeProps> = ({
     date,
     onDateChange,
     readOnly = false,
-    labels,
-    myId
+    labels
 }) => {
     // Helper to format date for display
     const getFormattedDate = (isoString: string) => {
@@ -54,8 +50,7 @@ const LoanMode: React.FC<LoanModeProps> = ({
                 selected={lender}
                 onSelect={onLenderChange}
                 readOnly={readOnly}
-                participants={participants}
-                myId={myId}
+                participants={PARTICIPANTS}
             />
 
             {/* Borrower Selection */}
@@ -64,8 +59,7 @@ const LoanMode: React.FC<LoanModeProps> = ({
                 selected={borrower}
                 onSelect={onBorrowerChange}
                 readOnly={readOnly}
-                participants={participants}
-                myId={myId}
+                participants={PARTICIPANTS}
             />
 
             {/* Amount Section */}
