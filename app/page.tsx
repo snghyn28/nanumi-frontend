@@ -7,7 +7,7 @@ import ExpenseList from "@/components/ExpenseList";
 import AddExpenseButton from "@/components/AddExpenseButton";
 import AddExpenseModal from "@/components/AddExpenseModal";
 import ExpenseDetailModal from "@/components/ExpenseDetailModal";
-import { mockSummary, mockExpenses, getExpenseDetail } from "@/data/mockData";
+import { mockSummary, mockExpenses, getExpenseDetail, GROUP_TITLE } from "@/data/mockData";
 import { ExpenseDetail } from "@/types";
 
 export default function Home() {
@@ -29,7 +29,7 @@ export default function Home() {
     <div className="min-h-[100dvh] bg-gray-50 flex justify-center">
       {/* Mobile Wrapper */}
       <div className="w-full max-w-md bg-background shadow-xl h-[100dvh] relative flex flex-col overflow-hidden">
-        <Header title={mockSummary.groupTitle} />
+        <Header title={GROUP_TITLE} />
 
         <main className="flex-1 overflow-y-auto pt-[50px]">
           <SettlementSummary summary={mockSummary} />

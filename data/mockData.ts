@@ -1,7 +1,8 @@
 import { Expense, ExpenseDetail, Participant, SettlementSummary } from '../types';
 
+export const GROUP_TITLE = "3박 4일 제주도 여행";
+
 export const mockSummary: SettlementSummary = {
-    groupTitle: "3박 4일 제주도 여행",
     totalAmount: 45000,
     type: 'receive',
 };
