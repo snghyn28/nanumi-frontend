@@ -12,22 +12,27 @@ interface ExpenseDetailModalProps {
     expenseDetail: ExpenseDetail | null;
 }
 
+const TABS = ['1/N', '각자 분담', '대여'];
+
 const ExpenseDetailModal: React.FC<ExpenseDetailModalProps> = ({ isOpen, onClose, expenseDetail }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     // Form State
+    const [title, setTitle] = useState('');
     const [amount, setAmount] = useState('');
     const [amountType, setAmountType] = useState<'total' | 'perPerson'>('total');
     const [date, setDate] = useState('');
     const [payer, setPayer] = useState<Participant>(PARTICIPANTS[0]);
     const [selectedParticipantIds, setSelectedParticipantIds] = useState<string[]>([]);
     const [individualAmounts, setIndividualAmounts] = useState<Record<string, string>>({});
+    const [selectedTab, setSelectedTab] = useState(TABS[0]);
     const [borrower, setBorrower] = useState<Participant>(PARTICIPANTS[1]);
 
     // Initialize state when expenseDetail changes
     useEffect(() => {
         if (expenseDetail) {
+            setTitle(expenseDetail.title);
             setDate(expenseDetail.date);
             setPayer(expenseDetail.payer);
             setIsEditing(false); // Reset edit mode on open
@@ -45,7 +50,12 @@ const ExpenseDetailModal: React.FC<ExpenseDetailModalProps> = ({ isOpen, onClose
             } else if (expenseDetail.type === 'LOAN') {
                 setAmount(expenseDetail.amount.toLocaleString());
                 setBorrower(expenseDetail.borrower);
+                setSelectedTab(TABS[2]);
             }
+
+            if (expenseDetail.type === 'SPLIT') setSelectedTab(TABS[0]);
+            else if (expenseDetail.type === 'INDIVIDUAL') setSelectedTab(TABS[1]);
+            else if (expenseDetail.type === 'LOAN') setSelectedTab(TABS[2]);
         }
     }, [expenseDetail, isOpen]);
 
@@ -60,75 +70,117 @@ const ExpenseDetailModal: React.FC<ExpenseDetailModalProps> = ({ isOpen, onClose
         onClose();
     };
 
+
     const renderContent = () => {
         if (!expenseDetail) return null;
 
-        switch (expenseDetail.type) {
-            case 'SPLIT':
-                return (
-                    <SplitMode
-                        amount={amount}
-                        onAmountChange={handleAmountChange}
-                        amountType={amountType}
-                        onAmountTypeChange={setAmountType}
-                        payer={payer}
-                        onPayerChange={setPayer}
-                        selectedParticipantIds={selectedParticipantIds}
-                        onParticipantsChange={setSelectedParticipantIds}
-                        date={date}
-                        onDateChange={setDate}
+        return (
+            <>
+                {/* Title Input */}
+                <div className="mb-6">
+                    <label className="text-sm font-medium text-gray-500 ml-1 mb-1 block">사용처</label>
+                    <input
+                        type="text"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
                         readOnly={!isEditing}
-                        labels={{
-                            payer: "결제한 멤버",
-                            amount: "결제한 금액"
-                        }}
+                        placeholder="사용처를 입력해주세요 (예: 스타벅스)"
+                        className={`w-full text-xl font-bold border-b-2 py-2 px-1 focus:outline-none bg-transparent transition-colors ${isEditing
+                            ? 'border-gray-100 focus:border-gray-800 placeholder-gray-300'
+                            : 'border-transparent cursor-default'
+                            }`}
                     />
-                );
-            case 'INDIVIDUAL':
-                return (
-                    <IndividualMode
-                        amounts={individualAmounts}
-                        onAmountsChange={setIndividualAmounts}
-                        payer={payer}
-                        onPayerChange={setPayer}
-                        date={date}
-                        onDateChange={setDate}
-                        readOnly={!isEditing}
-                        labels={{
-                            payer: "결제한 멤버",
-                            amountLabel: "결제한 금액"
-                        }}
-                    />
-                );
-            case 'LOAN':
-                return (
-                    <LoanMode
-                        amount={amount}
-                        onAmountChange={handleAmountChange}
-                        lender={payer} // payer is lender in base interface
-                        onLenderChange={setPayer}
-                        borrower={borrower}
-                        onBorrowerChange={setBorrower}
-                        date={date}
-                        onDateChange={setDate}
-                        readOnly={!isEditing}
-                        labels={{
-                            lender: "빌려준 멤버",
-                            borrower: "빌린 멤버",
-                            amount: "빌려준 금액"
-                        }}
-                    />
-                );
-            default:
-                return null;
-        }
-    };
+                </div>
 
+                {/* Segmented Tabs */}
+                <div className={`bg-gray-100 p-1 rounded-xl flex relative mb-6 ${!isEditing ? 'opacity-75 pointer-events-none' : ''}`}>
+                    {TABS.map((tab) => (
+                        <button
+                            key={tab}
+                            onClick={() => isEditing && setSelectedTab(tab)}
+                            className={`flex-1 py-2 text-sm font-medium rounded-lg relative z-10 transition-colors duration-200 ${selectedTab === tab ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'
+                                }`}
+                        >
+                            {tab}
+                            {selectedTab === tab && (
+                                <motion.div
+                                    layoutId="activeDetailTab"
+                                    className="absolute inset-0 bg-white shadow-sm rounded-lg -z-10"
+                                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                />
+                            )}
+                        </button>
+                    ))}
+                </div>
+
+                {(() => {
+                    switch (selectedTab) {
+                        case '1/N':
+                            return (
+                                <SplitMode
+                                    amount={amount}
+                                    onAmountChange={handleAmountChange}
+                                    amountType={amountType}
+                                    onAmountTypeChange={setAmountType}
+                                    payer={payer}
+                                    onPayerChange={setPayer}
+                                    selectedParticipantIds={selectedParticipantIds}
+                                    onParticipantsChange={setSelectedParticipantIds}
+                                    date={date}
+                                    onDateChange={setDate}
+                                    readOnly={!isEditing}
+                                    labels={{
+                                        payer: "결제한 멤버",
+                                        amount: "결제한 금액"
+                                    }}
+                                />
+                            );
+                        case '각자 분담':
+                            return (
+                                <IndividualMode
+                                    amounts={individualAmounts}
+                                    onAmountsChange={setIndividualAmounts}
+                                    payer={payer}
+                                    onPayerChange={setPayer}
+                                    date={date}
+                                    onDateChange={setDate}
+                                    readOnly={!isEditing}
+                                    labels={{
+                                        payer: "결제한 멤버",
+                                        amountLabel: "계산한 금액"
+                                    }}
+                                />
+                            );
+                        case '대여':
+                            return (
+                                <LoanMode
+                                    amount={amount}
+                                    onAmountChange={handleAmountChange}
+                                    lender={payer} // payer is lender in base interface
+                                    onLenderChange={setPayer}
+                                    borrower={borrower}
+                                    onBorrowerChange={setBorrower}
+                                    date={date}
+                                    onDateChange={setDate}
+                                    readOnly={!isEditing}
+                                    labels={{
+                                        lender: "빌려준 멤버",
+                                        borrower: "빌린 멤버",
+                                        amount: "빌려준 금액"
+                                    }}
+                                />
+                            );
+                        default:
+                            return null;
+                    }
+                })()}
+            </>
+        );
+    };
     return (
         <AnimatePresence>
             {isOpen && (
                 <>
-                    {/* Backdrop */}
                     <motion.div
                         className="fixed inset-0 bg-black/50 z-[60]"
                         initial={{ opacity: 0 }}
@@ -136,8 +188,6 @@ const ExpenseDetailModal: React.FC<ExpenseDetailModalProps> = ({ isOpen, onClose
                         exit={{ opacity: 0 }}
                         onClick={onClose}
                     />
-
-                    {/* Bottom Sheet Modal */}
                     <motion.div
                         className="fixed bottom-0 left-0 right-0 z-[70] flex justify-center pointer-events-none"
                         initial={{ y: "100%" }}
@@ -146,25 +196,26 @@ const ExpenseDetailModal: React.FC<ExpenseDetailModalProps> = ({ isOpen, onClose
                         transition={{ type: "spring", damping: 25, stiffness: 200 }}
                     >
                         <div className="w-full max-w-md bg-white rounded-t-3xl shadow-2xl pointer-events-auto h-[85dvh] flex flex-col">
-                            {/* Handle for visual cues */}
-                            <div className="pt-6 pb-2 px-6 flex-none">
-                                <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6" />
-                                <div className="flex justify-between items-center mb-4">
-                                    <h2 className="text-xl font-bold text-gray-900">지출 상세</h2>
-                                    <button
-                                        onClick={() => setIsDeleteModalOpen(true)}
-                                        className="p-2 text-gray-400 hover:text-red-500 transition-colors rounded-full hover:bg-red-50"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                        </svg>
-                                    </button>
-                                </div>
+                            <div className="pt-5 pb-2 px-6 flex-none">
+                                <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-3" />
+                                <h2 className="text-xl font-bold text-gray-900 mb-2">{isEditing ? '지출 수정' : '지출 상세'}</h2>
                             </div>
 
                             {/* Content */}
                             <div className="flex-1 overflow-y-auto px-6 py-4">
                                 {renderContent()}
+
+                                {!isEditing && (
+                                    <div className="mt-8">
+                                        <button
+                                            onClick={() => setIsDeleteModalOpen(true)}
+                                            className="w-full py-3 rounded-xl bg-red-50 text-red-500 font-medium text-sm hover:bg-red-100 transition-colors"
+                                        >
+                                            지출 삭제
+                                        </button>
+                                    </div>
+                                )}
+
                                 <div className="h-12" />
                             </div>
 
@@ -205,8 +256,8 @@ const ExpenseDetailModal: React.FC<ExpenseDetailModalProps> = ({ isOpen, onClose
                                     </button>
                                 </div>
                             </div>
-                        </div>
-                    </motion.div>
+                        </div >
+                    </motion.div >
 
                     <DeleteModal
                         isOpen={isDeleteModalOpen}
@@ -215,7 +266,7 @@ const ExpenseDetailModal: React.FC<ExpenseDetailModalProps> = ({ isOpen, onClose
                     />
                 </>
             )}
-        </AnimatePresence>
+        </AnimatePresence >
     );
 };
 

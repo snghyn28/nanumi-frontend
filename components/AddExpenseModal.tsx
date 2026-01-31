@@ -14,6 +14,7 @@ const TABS = ['1/N', '각자 분담', '대여'];
 
 const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose }) => {
     const [selectedTab, setSelectedTab] = useState(TABS[0]);
+    const [title, setTitle] = useState('');
     const [amount, setAmount] = useState('');
     const [amountType, setAmountType] = useState<'total' | 'perPerson'>('total');
 
@@ -110,12 +111,27 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose }) =>
                     >
                         <div className="w-full max-w-md bg-white rounded-t-3xl shadow-2xl pointer-events-auto h-[85dvh] flex flex-col">
                             {/* Handle for visual cues */}
-                            <div className="pt-6 pb-2 px-6 flex-none">
-                                <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6" />
-                                <h2 className="text-xl font-bold text-gray-900 mb-4">지출 추가</h2>
+                            <div className="pt-5 pb-2 px-6 flex-none">
+                                <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-3" />
+                                <h2 className="text-xl font-bold text-gray-900 mb-2">지출 추가</h2>
+                            </div>
+
+                            {/* Content based on Tab */}
+                            <div className="flex-1 overflow-y-auto px-6 py-4">
+                                {/* Title Input */}
+                                <div className="mb-6">
+                                    <label className="text-sm font-medium text-gray-500 ml-1 mb-1 block">사용처</label>
+                                    <input
+                                        type="text"
+                                        value={title}
+                                        onChange={(e) => setTitle(e.target.value)}
+                                        placeholder="예) 카페, 점심, 숙소"
+                                        className="w-full text-xl font-bold border-b-2 border-gray-100 py-2 px-1 focus:border-gray-800 focus:outline-none bg-transparent placeholder-gray-300 transition-colors"
+                                    />
+                                </div>
 
                                 {/* Segmented Tabs */}
-                                <div className="bg-gray-100 p-1 rounded-xl flex relative">
+                                <div className="bg-gray-100 p-1 rounded-xl flex relative mb-6">
                                     {TABS.map((tab) => (
                                         <button
                                             key={tab}
@@ -134,10 +150,7 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose }) =>
                                         </button>
                                     ))}
                                 </div>
-                            </div>
 
-                            {/* Content based on Tab */}
-                            <div className="flex-1 overflow-y-auto px-6 py-4">
                                 {renderModeContent()}
                                 {/* Bottom spacer for scrolling past content */}
                                 <div className="h-12" />
