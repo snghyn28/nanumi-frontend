@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Expense } from '@/data/mockData';
+import { Expense } from '@/types';
 import { motion, useAnimation, PanInfo } from 'framer-motion';
 import DeleteModal from './DeleteModal';
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ExpenseDetail, PARTICIPANTS, Participant } from '../data/mockData';
+import { ExpenseDetail, Participant } from '@/types';
+import { PARTICIPANTS } from '../data/mockData';
 import SplitMode from './SplitMode';
 import IndividualMode from './IndividualMode';
 import LoanMode from './LoanMode';

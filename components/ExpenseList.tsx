@@ -1,5 +1,5 @@
 import React from 'react';
-import { Expense } from '@/data/mockData';
+import { Expense } from '@/types';
 import ExpenseCard from './ExpenseCard';
 
 interface ExpenseListProps {

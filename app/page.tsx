@@ -7,7 +7,8 @@ import ExpenseList from "@/components/ExpenseList";
 import AddExpenseButton from "@/components/AddExpenseButton";
 import AddExpenseModal from "@/components/AddExpenseModal";
 import ExpenseDetailModal from "@/components/ExpenseDetailModal";
-import { mockSummary, mockExpenses, getExpenseDetail, ExpenseDetail } from "@/data/mockData";
+import { mockSummary, mockExpenses, getExpenseDetail } from "@/data/mockData";
+import { ExpenseDetail } from "@/types";
 
 export default function Home() {
   const [isAddExpenseModalOpen, setIsAddExpenseModalOpen] = useState(false);

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PARTICIPANTS, Participant } from '../data/mockData';
+import { PARTICIPANTS } from '../data/mockData';
+import { Participant } from '@/types';
 import MemberDropdown from './MemberDropdown';
 import AdvancedSettings from './AdvancedSettings';
 
