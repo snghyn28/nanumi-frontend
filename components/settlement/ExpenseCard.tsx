@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Expense } from '@/types';
 import { motion, useAnimation, PanInfo } from 'framer-motion';
-import DeleteModal from './DeleteModal';
+import DeleteModal from '../DeleteModal';
 
 import { useRouter } from 'next/navigation';
 

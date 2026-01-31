@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PARTICIPANTS } from '../data/mockData';
+import { PARTICIPANTS } from '../../data/mockData';
 import { Participant } from '@/types';
 import SplitMode from './SplitMode';
 import IndividualMode from './IndividualMode';

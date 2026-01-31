@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PARTICIPANTS } from '../data/mockData';
+import { PARTICIPANTS } from '../../data/mockData';
 import { Participant } from '@/types';
-import MemberDropdown from './MemberDropdown';
-import AdvancedSettings from './AdvancedSettings';
+import MemberDropdown from '../MemberDropdown';
+import AdvancedSettings from '../AdvancedSettings';
 
 interface SplitModeProps {
     amount: string;

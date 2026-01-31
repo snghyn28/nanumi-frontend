@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { PARTICIPANTS } from '../data/mockData';
+import { PARTICIPANTS } from '../../data/mockData';
 import { Participant } from '@/types';
-import MemberDropdown from './MemberDropdown';
-import AdvancedSettings from './AdvancedSettings';
+import MemberDropdown from '../MemberDropdown';
+import AdvancedSettings from '../AdvancedSettings';
 
 interface IndividualModeProps {
     amounts: Record<string, string>;

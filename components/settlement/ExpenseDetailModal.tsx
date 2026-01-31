@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ExpenseDetail, Participant } from '@/types';
-import { PARTICIPANTS } from '../data/mockData';
+import { PARTICIPANTS } from '../../data/mockData';
 import SplitMode from './SplitMode';
 import IndividualMode from './IndividualMode';
 import LoanMode from './LoanMode';
-import DeleteModal from './DeleteModal';
+import DeleteModal from '../DeleteModal';
 
 interface ExpenseDetailModalProps {
     isOpen: boolean;
