@@ -11,6 +11,7 @@ interface SettlementContextType {
     updateParticipantName: (id: string, name: string) => void;
     addParticipant: (name: string) => void;
     removeParticipant: (id: string) => void;
+    setParticipants: (participants: Participant[]) => void;
     myId: string;
     setMyId: (id: string) => void;
 }
@@ -50,6 +51,7 @@ export const SettlementProvider: React.FC<{ children: ReactNode }> = ({ children
             updateParticipantName,
             addParticipant,
             removeParticipant,
+            setParticipants,
             myId,
             setMyId
         }}>

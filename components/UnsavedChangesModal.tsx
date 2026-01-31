@@ -1,14 +1,13 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-interface MemberDeleteModalProps {
+interface UnsavedChangesModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: () => void;
-    memberName: string;
+    onDiscard: () => void;
 }
 
-const MemberDeleteModal: React.FC<MemberDeleteModalProps> = ({ isOpen, onClose, onConfirm, memberName }) => {
+const UnsavedChangesModal: React.FC<UnsavedChangesModalProps> = ({ isOpen, onClose, onDiscard }) => {
     return (
         <AnimatePresence>
             {isOpen && (
@@ -19,7 +18,7 @@ const MemberDeleteModal: React.FC<MemberDeleteModalProps> = ({ isOpen, onClose, 
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 bg-black/40 z-[80] flex items-center justify-center p-6 backdrop-blur-sm"
+                        className="fixed inset-0 bg-black/40 z-[100] flex items-center justify-center p-6 backdrop-blur-sm"
                     >
                         {/* Modal Content */}
                         <motion.div
@@ -29,9 +28,9 @@ const MemberDeleteModal: React.FC<MemberDeleteModalProps> = ({ isOpen, onClose, 
                             onClick={(e) => e.stopPropagation()}
                             className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl"
                         >
-                            <h3 className="text-lg font-bold text-gray-900 mb-2">{memberName}님을 삭제하시겠습니까?</h3>
+                            <h3 className="text-lg font-bold text-gray-900 mb-2">저장하지 않고 나가시겠습니까?</h3>
                             <p className="text-gray-500 text-sm mb-6">
-                                이 멤버와 관련된 정산 내역이 있다면 모두 삭제됩니다,
+                                변경사항이 저장되지 않았습니다.
                             </p>
                             <div className="flex gap-3">
                                 <button
@@ -41,10 +40,10 @@ const MemberDeleteModal: React.FC<MemberDeleteModalProps> = ({ isOpen, onClose, 
                                     취소
                                 </button>
                                 <button
-                                    onClick={onConfirm}
+                                    onClick={onDiscard}
                                     className="flex-1 px-4 py-3 rounded-xl bg-red-500 text-white font-semibold hover:bg-red-600 transition-colors shadow-sm"
                                 >
-                                    삭제
+                                    나가기
                                 </button>
                             </div>
                         </motion.div>
@@ -55,4 +54,4 @@ const MemberDeleteModal: React.FC<MemberDeleteModalProps> = ({ isOpen, onClose, 
     );
 };
 
-export default MemberDeleteModal;
+export default UnsavedChangesModal;
