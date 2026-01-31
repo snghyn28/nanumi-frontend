@@ -192,12 +192,12 @@ export default function SettingsPage() {
                                 value={newMemberName}
                                 onChange={(e) => setNewMemberName(e.target.value)}
                                 placeholder="새 멤버 이름"
-                                className="flex-1 bg-white px-4 py-3 rounded-2xl border border-gray-200 focus:border-blue-500 focus:outline-none shadow-sm font-medium transition-all"
+                                className="flex-1 min-w-0 bg-white px-4 py-3 rounded-2xl border border-gray-200 focus:border-blue-500 focus:outline-none shadow-sm font-medium transition-all"
                             />
                             <button
                                 type="submit"
                                 disabled={!newMemberName.trim()}
-                                className="bg-blue-600 text-white p-3 rounded-2xl shadow-lg shadow-blue-500/30 disabled:opacity-50 disabled:shadow-none hover:bg-blue-700 transition-all"
+                                className="flex-none bg-blue-600 text-white p-3 rounded-2xl shadow-lg shadow-blue-500/30 disabled:opacity-50 disabled:shadow-none hover:bg-blue-700 transition-all"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-6 h-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
