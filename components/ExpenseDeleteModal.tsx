@@ -37,7 +37,7 @@ const ExpenseDeleteModal: React.FC<DeleteModalProps> = ({ isOpen, onClose, onCon
                                     onClick={onClose}
                                     className="flex-1 px-4 py-3 rounded-xl bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition-colors"
                                 >
-                                    취소``
+                                    취소
                                 </button>
                                 <button
                                     onClick={onConfirm}

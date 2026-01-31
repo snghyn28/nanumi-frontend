@@ -31,7 +31,7 @@ const MemberDeleteModal: React.FC<MemberDeleteModalProps> = ({ isOpen, onClose, 
                         >
                             <h3 className="text-lg font-bold text-gray-900 mb-2">{memberName}님을 삭제하시겠습니까?</h3>
                             <p className="text-gray-500 text-sm mb-6">
-                                이 멤버와 관련된 정산 내역이 있다면 모두 삭제됩니다,
+                                이 멤버와 관련된 정산 내역이 있다면 모두 삭제됩니다.
                             </p>
                             <div className="flex gap-3">
                                 <button
