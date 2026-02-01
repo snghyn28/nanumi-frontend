@@ -19,6 +19,8 @@ interface LoanModeProps {
         borrower?: string;
         amount?: string;
     };
+    participants: Participant[];
+    myId: string;
 }
 
 const LoanMode: React.FC<LoanModeProps> = ({
@@ -31,7 +33,9 @@ const LoanMode: React.FC<LoanModeProps> = ({
     date,
     onDateChange,
     readOnly = false,
-    labels
+    labels,
+    participants,
+    myId
 }) => {
     // Helper to format date for display
     const getFormattedDate = (isoString: string) => {
@@ -50,7 +54,8 @@ const LoanMode: React.FC<LoanModeProps> = ({
                 selected={lender}
                 onSelect={onLenderChange}
                 readOnly={readOnly}
-                participants={PARTICIPANTS}
+                participants={participants}
+                myId={myId}
             />
 
             {/* Borrower Selection */}
@@ -59,7 +64,8 @@ const LoanMode: React.FC<LoanModeProps> = ({
                 selected={borrower}
                 onSelect={onBorrowerChange}
                 readOnly={readOnly}
-                participants={PARTICIPANTS}
+                participants={participants}
+                myId={myId}
             />
 
             {/* Amount Section */}

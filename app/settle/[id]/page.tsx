@@ -7,7 +7,7 @@ import ExpenseList from "@/components/settlement/ExpenseList";
 import AddExpenseButton from "@/components/settlement/AddExpenseButton";
 import AddExpenseModal from "@/components/settlement/AddExpenseModal";
 import ExpenseDetailModal from "@/components/settlement/ExpenseDetailModal";
-import { mockSummary, mockExpenses, getExpenseDetail } from "@/data/mockData";
+import { mockSettlement, mockExpenses, getExpenseDetail } from "@/data/mockData";
 import { ExpenseDetail } from "@/types";
 import { useSettlement } from "@/context/SettlementContext";
 import { useParams } from "next/navigation";
@@ -36,7 +36,10 @@ export default function SettlePage() {
                 <Header title={groupTitle} settingsLink={`/settle/${params.id}/settings`} />
 
                 <main className="flex-1 overflow-y-auto pt-[50px]">
-                    <SettlementSummary summary={mockSummary} />
+                    <SettlementSummary
+                        summary={mockSettlement}
+                        detailLink={`/settle/${params.id}/detail`}
+                    />
                     <ExpenseList
                         expenses={mockExpenses}
                         onExpenseClick={handleExpenseClick}

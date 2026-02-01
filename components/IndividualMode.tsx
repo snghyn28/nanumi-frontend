@@ -16,6 +16,8 @@ interface IndividualModeProps {
         payer?: string;
         amountLabel?: string;
     };
+    participants: Participant[];
+    myId: string;
 }
 
 const IndividualMode: React.FC<IndividualModeProps> = ({
@@ -26,8 +28,17 @@ const IndividualMode: React.FC<IndividualModeProps> = ({
     date,
     onDateChange,
     readOnly = false,
-    labels
+    labels,
+    participants,
+    myId
 }) => {
+    // Sort participants to put "Me" first
+    const sortedParticipants = [...participants].sort((a, b) => {
+        if (a.id === myId) return -1;
+        if (b.id === myId) return 1;
+        return 0; // Maintain original order for others
+    });
+
     // Calculate total amount from all entered amounts
     const totalAmount = Object.values(amounts)
         .reduce((sum, amount) => sum + (Number(amount.replace(/[^0-9]/g, '')) || 0), 0);
@@ -57,7 +68,8 @@ const IndividualMode: React.FC<IndividualModeProps> = ({
                 selected={payer}
                 onSelect={onPayerChange}
                 readOnly={readOnly}
-                participants={PARTICIPANTS}
+                participants={participants}
+                myId={myId}
             />
 
             <div className="space-y-3">
@@ -69,7 +81,7 @@ const IndividualMode: React.FC<IndividualModeProps> = ({
 
                     <div className="bg-gray-50 rounded-2xl p-2 flex flex-col">
                         <div className="flex flex-col gap-2">
-                            {PARTICIPANTS.map((person) => {
+                            {sortedParticipants.map((person) => {
                                 const amount = amounts[person.id] || '';
                                 const hasAmount = amount.length > 0;
 
@@ -82,6 +94,9 @@ const IndividualMode: React.FC<IndividualModeProps> = ({
                                             <span className={`font-medium ${hasAmount ? 'text-gray-900' : 'text-gray-500'}`}>
                                                 {person.name}
                                             </span>
+                                            {myId === person.id && (
+                                                <span className="text-xs font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded-md whitespace-nowrap">나</span>
+                                            )}
                                         </div>
 
                                         <div className="flex items-center gap-2 justify-end">

@@ -21,6 +21,8 @@ interface SplitModeProps {
         payer?: string;
         amount?: string;
     };
+    participants: Participant[];
+    myId: string;
 }
 
 const SplitMode: React.FC<SplitModeProps> = ({
@@ -35,29 +37,19 @@ const SplitMode: React.FC<SplitModeProps> = ({
     date,
     onDateChange,
     readOnly = false,
-    labels
+    labels,
+    participants,
+    myId
 }) => {
-    // Amount Type Dropdown State
+    // Sort participants to put "Me" first
+    const sortedParticipants = [...participants].sort((a, b) => {
+        if (a.id === myId) return -1;
+        if (b.id === myId) return 1;
+        return 0; // Maintain original order for others
+    });
+
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
-
-    const toggleSelectAll = () => {
-        if (readOnly) return;
-        if (selectedParticipantIds.length === PARTICIPANTS.length) {
-            onParticipantsChange([]);
-        } else {
-            onParticipantsChange(PARTICIPANTS.map(p => p.id));
-        }
-    };
-
-    const toggleParticipant = (id: string) => {
-        if (readOnly) return;
-        if (selectedParticipantIds.includes(id)) {
-            onParticipantsChange(selectedParticipantIds.filter(pId => pId !== id));
-        } else {
-            onParticipantsChange([...selectedParticipantIds, id]);
-        }
-    };
 
     // Close dropdowns when clicking outside
     useEffect(() => {
@@ -86,6 +78,25 @@ const SplitMode: React.FC<SplitModeProps> = ({
         return `${year}. ${month}. ${day}`;
     };
 
+    // In toggleSelectAll and toggleParticipant, use participants instead of PARTICIPANTS
+    const toggleSelectAll = () => {
+        if (readOnly) return;
+        if (selectedParticipantIds.length === participants.length) {
+            onParticipantsChange([]);
+        } else {
+            onParticipantsChange(participants.map(p => p.id));
+        }
+    };
+
+    const toggleParticipant = (id: string) => {
+        if (readOnly) return;
+        if (selectedParticipantIds.includes(id)) {
+            onParticipantsChange(selectedParticipantIds.filter(pId => pId !== id));
+        } else {
+            onParticipantsChange([...selectedParticipantIds, id]);
+        }
+    };
+
     return (
         <div className="space-y-6">
             {/* Payer Selection Section */}
@@ -94,7 +105,8 @@ const SplitMode: React.FC<SplitModeProps> = ({
                 selected={payer}
                 onSelect={onPayerChange}
                 readOnly={readOnly}
-                participants={PARTICIPANTS}
+                participants={participants}
+                myId={myId}
             />
 
             {/* Amount Section */}
@@ -176,13 +188,13 @@ const SplitMode: React.FC<SplitModeProps> = ({
                             onClick={toggleSelectAll}
                             className="text-xs font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-full transition-colors"
                         >
-                            {selectedParticipantIds.length === PARTICIPANTS.length ? '선택 해제' : '모두 선택'}
+                            {selectedParticipantIds.length === participants.length ? '선택 해제' : '모두 선택'}
                         </button>
                     )}
                 </div>
 
                 <div className="bg-gray-50 rounded-2xl p-2 flex flex-col gap-2">
-                    {PARTICIPANTS.map((person) => {
+                    {sortedParticipants.map((person) => {
                         const isSelected = selectedParticipantIds.includes(person.id);
                         return (
                             <button
@@ -194,6 +206,15 @@ const SplitMode: React.FC<SplitModeProps> = ({
                                 <span className={`font-medium ${isSelected ? 'text-gray-900' : 'text-gray-400'}`}>
                                     {person.name}
                                 </span>
+                                {myId === person.id && (
+                                    <span className="text-xs font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded-md whitespace-nowrap ml-2 mr-auto"
+                                        style={{ marginLeft: '10px', marginRight: 'auto' }}>나</span>
+                                )}
+                                {/* Adjusted styles for 'me' badge slightly for visibility if needed, or stick to simple text if preferred. 
+                                   Actually let's just use the badge like in MemberDropdown if desired, but request didn't explicitly ask for badge here, just "always on top".
+                                   But adding badge helps identify "me".
+                                */}
+
                                 <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected
                                     ? 'bg-blue-500 border-blue-500'
                                     : 'border-gray-300'

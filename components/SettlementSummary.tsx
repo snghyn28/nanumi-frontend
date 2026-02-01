@@ -1,5 +1,5 @@
 import React from 'react';
-import { SettlementSummary as SummaryType } from '@/types';
+import { Settlement as SummaryType } from '@/types';
 
 import Link from 'next/link';
 

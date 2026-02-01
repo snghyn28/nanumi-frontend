@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PARTICIPANTS } from '../data/mockData';
+import { useSettlement } from '@/context/SettlementContext';
 import SplitMode from './SplitMode';
 import IndividualMode from './IndividualMode';
 import LoanMode from './LoanMode';
@@ -13,6 +13,7 @@ interface AddExpenseModalProps {
 const TABS = ['1/N', '각자 분담', '대여'];
 
 const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose }) => {
+    const { participants, myId } = useSettlement();
     const [selectedTab, setSelectedTab] = useState(TABS[0]);
     const [title, setTitle] = useState('');
     const [amount, setAmount] = useState('');
@@ -25,16 +26,35 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose }) =>
         return now.toISOString().slice(0, 16);
     });
 
+    const getMe = () => participants.find(p => p.id === myId) || participants[0];
+
     // Split Mode State
-    const [selectedPayer, setSelectedPayer] = useState(PARTICIPANTS[0]); // Default payer
-    const [selectedParticipantIds, setSelectedParticipantIds] = useState<string[]>(PARTICIPANTS.map(p => p.id));
+    const [selectedPayer, setSelectedPayer] = useState(getMe());
+    const [selectedParticipantIds, setSelectedParticipantIds] = useState<string[]>(participants.map(p => p.id));
 
     // Individual Mode State
     const [individualAmounts, setIndividualAmounts] = useState<Record<string, string>>({});
 
     // Loan Mode State
-    const [lender, setLender] = useState(PARTICIPANTS[0]);
-    const [borrower, setBorrower] = useState(PARTICIPANTS[1]);
+    const [lender, setLender] = useState(getMe());
+    const [borrower, setBorrower] = useState(participants.find(p => p.id !== myId) || participants[0]);
+
+    // Update defaults when context changes (optional, but good for initial load if context wasn't ready)
+    React.useEffect(() => {
+        if (isOpen) {
+            const me = getMe();
+            setSelectedPayer(me);
+            setLender(me);
+            // For borrower, default to someone else if possible, or just first available
+            const other = participants.find(p => p.id !== myId) || participants[0];
+            setBorrower(other);
+
+            // Also reset participants list if needed, or keep previous selection?
+            // Usually on open we might want to reset or keep. 
+            // Let's stick to initializing on mount/open.
+        }
+    }, [isOpen, myId, participants]); // Run when modal opens or context updates
+
 
 
     const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,6 +77,8 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose }) =>
                         onParticipantsChange={setSelectedParticipantIds}
                         date={date}
                         onDateChange={setDate}
+                        participants={participants}
+                        myId={myId}
                     />
                 );
             case '각자 분담':
@@ -68,6 +90,8 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose }) =>
                         onPayerChange={setSelectedPayer}
                         date={date}
                         onDateChange={setDate}
+                        participants={participants}
+                        myId={myId}
                     />
                 );
             case '대여':
@@ -81,6 +105,8 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose }) =>
                         onBorrowerChange={setBorrower}
                         date={date}
                         onDateChange={setDate}
+                        participants={participants} // Note: LoanMode might need update to accept this
+                        myId={myId} // Note: LoanMode might need update
                     />
                 );
             default:

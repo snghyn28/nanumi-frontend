@@ -16,6 +16,13 @@ const MemberDropdown: React.FC<MemberDropdownProps> = ({ label, selected, onSele
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
+    // Sort participants to put "Me" first
+    const sortedParticipants = [...participants].sort((a, b) => {
+        if (a.id === myId) return -1;
+        if (b.id === myId) return 1;
+        return 0; // Maintain original order for others
+    });
+
     // Close dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -61,7 +68,7 @@ const MemberDropdown: React.FC<MemberDropdownProps> = ({ label, selected, onSele
                             className="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-30"
                         >
                             <div className="p-2 max-h-60 overflow-y-auto flex flex-col gap-1">
-                                {participants.map((person) => (
+                                {sortedParticipants.map((person) => (
                                     <button
                                         key={person.id}
                                         onClick={() => {

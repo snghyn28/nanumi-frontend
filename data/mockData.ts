@@ -1,8 +1,8 @@
-import { Expense, ExpenseDetail, Participant, SettlementSummary } from '../types';
+import { Expense, ExpenseDetail, Participant, Settlement, SettlementDetail } from '../types';
 
 export const GROUP_TITLE = "3박 4일 제주도 여행";
 
-export const mockSummary: SettlementSummary = {
+export const mockSettlement: Settlement = {
     totalAmount: 45000,
     type: 'receive',
 };
@@ -110,4 +110,26 @@ export const mockExpenseDetails: ExpenseDetail[] = [
 
 export const getExpenseDetail = (id: string): ExpenseDetail | null => {
     return mockExpenseDetails.find(detail => detail.id === id) || null;
+};
+
+export const mockSettlementDetail: SettlementDetail = {
+    totalAmount: 15000,
+    type: 'receive',
+    details: [
+        {
+            debtor: PARTICIPANTS[1],
+            creditor: PARTICIPANTS[0],
+            amount: 5000
+        },
+        {
+            debtor: PARTICIPANTS[2],
+            creditor: PARTICIPANTS[0],
+            amount: 10000
+        },
+        {
+            debtor: PARTICIPANTS[2],
+            creditor: PARTICIPANTS[3],
+            amount: 20000
+        }
+    ]
 };

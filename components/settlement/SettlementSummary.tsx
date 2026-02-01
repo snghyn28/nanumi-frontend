@@ -1,13 +1,14 @@
 import React from 'react';
-import { SettlementSummary as SummaryType } from '@/types';
+import { Settlement as SummaryType } from '@/types';
 
 import Link from 'next/link';
 
 interface SettlementSummaryProps {
     summary: SummaryType;
+    detailLink?: string;
 }
 
-const SettlementSummary: React.FC<SettlementSummaryProps> = ({ summary }) => {
+const SettlementSummary: React.FC<SettlementSummaryProps> = ({ summary, detailLink }) => {
     const isReceive = summary.type === 'receive';
     const amountColor = isReceive ? 'text-receive' : 'text-pay';
     const message = isReceive ? '내가 받을 돈' : '내가 지불할 돈';
@@ -25,12 +26,14 @@ const SettlementSummary: React.FC<SettlementSummaryProps> = ({ summary }) => {
             <div className={`text-4xl font-bold tracking-tighter ${amountColor} mb-2`}>
                 {formattedAmount}<span className="text-2xl text-foreground/80"> 원</span>
             </div>
-            <Link href="/test" className="flex items-center text-sm font-bold text-blue-400 hover:text-blue-500 transition-colors group">
-                정산 상세 보기
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={4} stroke="currentColor" className="w-3 h-3 ml-1 group-hover:translate-x-0.5 transition-transform mb-[1px]">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                </svg>
-            </Link>
+            {detailLink && (
+                <Link href={detailLink} className="flex items-center text-sm font-bold text-blue-400 hover:text-blue-500 transition-colors group">
+                    정산 상세 보기
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={4} stroke="currentColor" className="w-3 h-3 ml-1 group-hover:translate-x-0.5 transition-transform mb-[1px]">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg>
+                </Link>
+            )}
         </div>
     );
 };
