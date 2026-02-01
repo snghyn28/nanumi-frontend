@@ -46,11 +46,7 @@ export default function SettlementDetailPage() {
     };
 
     const handleRepaymentConfirm = (amount: number) => {
-        // Here you would typically make an API call.
-        // For now, we'll just log it.
         console.log(`Repayment confirmed: ${amount} won from ${selectedDetail?.debtor.name} to ${selectedDetail?.creditor.name}`);
-
-        // Local state update removed as per request (will be handled by API later)
 
         setIsRepaymentModalOpen(false); // Close modal after confirmation
     };
@@ -60,13 +56,15 @@ export default function SettlementDetailPage() {
         const isMeCreditor = detail.creditor.id === myId;
         const isMyRelated = isMeDebtor || isMeCreditor;
 
-        // Styling: Uniform container and text, distinct amount color
         const containerClass = "bg-white shadow-sm border border-gray-100";
         const textColor = "text-gray-900";
         const arrowColor = "text-gray-300";
-
-        // Amount color: Blue for me, Gray for others
-        const amountTextClass = isMyRelated ? "text-accent font-bold" : "text-gray-400 font-medium";
+        let amountTextClass = "text-gray-400 font-medium";
+        if (isMeDebtor) {
+            amountTextClass = "text-pay font-bold";
+        } else if (isMeCreditor) {
+            amountTextClass = "text-receive font-bold";
+        }
 
         return (
             <motion.div
@@ -132,10 +130,21 @@ export default function SettlementDetailPage() {
                 <main className="flex-1 overflow-y-auto">
                     {/* Top Summary Section */}
                     <div className="px-6 py-10 bg-white border-b border-gray-100">
-                        <p className="text-gray-500 text-sm mb-1 font-medium text-center">{message}</p>
-                        <div className={`text-4xl font-bold tracking-tighter ${amountColor} text-center mb-2`}>
-                            {formattedTotalAmount}<span className="text-2xl text-foreground/80 text-gray-900"> 원</span>
-                        </div>
+                        {summary.totalAmount === 0 ? (
+                            <>
+                                <p className="text-gray-500 text-sm mb-1 font-medium text-center">정산 완료</p>
+                                <div className="text-2xl font-bold tracking-tighter text-gray-800 text-center mb-2">
+                                    받거나 줄 돈이 없어요.
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <p className="text-gray-500 text-sm mb-1 font-medium text-center">{message}</p>
+                                <div className={`text-4xl font-bold tracking-tighter ${amountColor} text-center mb-2`}>
+                                    {formattedTotalAmount}<span className="text-2xl text-foreground/80 text-gray-900"> 원</span>
+                                </div>
+                            </>
+                        )}
                     </div>
 
                     {/* Details List */}

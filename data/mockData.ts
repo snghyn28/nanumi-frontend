@@ -3,7 +3,7 @@ import { Expense, ExpenseDetail, Participant, Settlement, SettlementDetail } fro
 export const GROUP_TITLE = "3박 4일 제주도 여행";
 
 export const mockSettlement: Settlement = {
-    totalAmount: 45000,
+    totalAmount: 15300,
     type: 'receive',
 };
 
