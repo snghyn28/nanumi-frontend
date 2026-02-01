@@ -27,14 +27,26 @@ const SettlementRepaymentModal: React.FC<SettlementRepaymentModalProps> = ({
     }, [isOpen, totalAmount]);
 
     const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setAmount(Number(e.target.value));
+        const rawValue = Number(e.target.value);
+        const minVal = Math.min(1000, totalAmount);
+
+        const stepCandidate = Math.round(rawValue / 1000) * 1000;
+
+        const distToStep = Math.abs(rawValue - stepCandidate);
+        const distToTotal = Math.abs(rawValue - totalAmount);
+
+        let finalValue = distToTotal < distToStep ? totalAmount : stepCandidate;
+
+        finalValue = Math.max(finalValue, minVal);
+        finalValue = Math.min(finalValue, totalAmount);
+
+        setAmount(finalValue);
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        // Allow empty string for better typing experience, but validate on blur/confirm
         const val = e.target.value.replace(/[^0-9]/g, '');
         if (val === '') {
-            setAmount(0); // Or handle as empty string slightly differently if using a string state
+            setAmount(0);
             return;
         }
         const numVal = parseInt(val, 10);
@@ -103,7 +115,7 @@ const SettlementRepaymentModal: React.FC<SettlementRepaymentModalProps> = ({
                                         type="range"
                                         min={Math.min(1000, totalAmount)}
                                         max={totalAmount}
-                                        step="1000"
+                                        step="1"
                                         value={amount}
                                         onChange={handleSliderChange}
                                         className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"

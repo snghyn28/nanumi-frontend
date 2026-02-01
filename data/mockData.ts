@@ -113,7 +113,7 @@ export const getExpenseDetail = (id: string): ExpenseDetail | null => {
 };
 
 export const mockSettlementDetail: SettlementDetail = {
-    totalAmount: 15000,
+    totalAmount: 15300,
     type: 'receive',
     details: [
         {
@@ -124,7 +124,7 @@ export const mockSettlementDetail: SettlementDetail = {
         {
             debtor: PARTICIPANTS[2],
             creditor: PARTICIPANTS[0],
-            amount: 10000
+            amount: 10300
         },
         {
             debtor: PARTICIPANTS[2],
