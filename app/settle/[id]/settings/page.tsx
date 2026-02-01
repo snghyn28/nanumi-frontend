@@ -3,9 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSettlement } from '@/context/SettlementContext';
-import { motion, AnimatePresence } from 'framer-motion';
-import MemberDeleteModal from '@/components/MemberDeleteModal';
-import UnsavedChangesModal from '@/components/UnsavedChangesModal';
+import MemberDeleteModal from '@/components/setting/modals/MemberDeleteModal';
+import UnsavedChangesModal from '@/components/setting/modals/UnsavedChangesModal';
 import { Participant } from '@/types';
 
 export default function SettingsPage() {

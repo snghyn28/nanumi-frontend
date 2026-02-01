@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ExpenseDetail, Participant } from '@/types';
 import { useSettlement } from '@/context/SettlementContext';
-import SplitMode from './SplitMode';
-import IndividualMode from './IndividualMode';
-import LoanMode from './LoanMode';
-import ExpenseDeleteModal from '../ExpenseDeleteModal';
+import SplitMode from '../modes/SplitMode';
+import IndividualMode from '../modes/IndividualMode';
+import LoanMode from '../modes/LoanMode';
+import ExpenseDeleteModal from './ExpenseDeleteModal';
 
 interface ExpenseDetailModalProps {
     isOpen: boolean;

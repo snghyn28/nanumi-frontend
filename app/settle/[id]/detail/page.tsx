@@ -4,7 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useSettlement } from '@/context/SettlementContext';
 import { mockSettlementDetail } from '@/data/mockData';
-import SettlementRepaymentModal from '@/components/settlement/SettlementRepaymentModal';
+import SettlementRepaymentModal from '@/components/settle/modals/SettlementRepaymentModal';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 

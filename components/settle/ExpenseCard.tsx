@@ -3,9 +3,9 @@
 import React, { useState } from 'react';
 import { Expense } from '@/types';
 import { motion, useAnimation, PanInfo } from 'framer-motion';
-import DeleteModal from '../ExpenseDeleteModal';
 
 import { useRouter } from 'next/navigation';
+import ExpenseDeleteModal from './modals/ExpenseDeleteModal';
 
 interface ExpenseCardProps {
     expense: Expense;
@@ -128,7 +128,7 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, isLast, isParticipan
                 </motion.div>
             </div >
 
-            <DeleteModal
+            <ExpenseDeleteModal
                 isOpen={isDeleteModalOpen}
                 onClose={handleCloseModal}
                 onConfirm={handleConfirmDelete}

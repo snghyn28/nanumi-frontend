@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import Header from "@/components/Header";
-import SettlementSummary from "@/components/settlement/SettlementSummary";
-import ExpenseList from "@/components/settlement/ExpenseList";
-import AddExpenseButton from "@/components/settlement/AddExpenseButton";
-import AddExpenseModal from "@/components/settlement/AddExpenseModal";
-import ExpenseDetailModal from "@/components/settlement/ExpenseDetailModal";
+import Header from "@/components/settle/Header";
+import SettlementSummary from "@/components/settle/SettlementSummary";
+import ExpenseList from "@/components/settle/ExpenseList";
+import AddExpenseButton from "@/components/settle/AddExpenseButton";
+import AddExpenseModal from "@/components/settle/modals/AddExpenseModal";
+import ExpenseDetailModal from "@/components/settle/modals/ExpenseDetailModal";
 import { mockSettlement, mockExpenses, getExpenseDetail } from "@/data/mockData";
 import { ExpenseDetail } from "@/types";
 import { useSettlement } from "@/context/SettlementContext";
