@@ -84,7 +84,7 @@ export default function CreatePage() {
             title: groupTitle.trim(),
             lastAccess: Date.now()
         };
-        localStorage.setItem(recentKey, JSON.stringify([newHistoryItem, ...recent]));
+        localStorage.setItem(recentKey, JSON.stringify([newHistoryItem, ...recent].slice(0, 3)));
 
         // 5. Copy Link & Notify
         const link = `${window.location.origin}/settle/${newId}`;
