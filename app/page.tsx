@@ -33,20 +33,7 @@ export default function Home() {
   }, []);
 
   const handleStart = () => {
-    // Generate new ID (UUID-like or timestamp for simplicity)
-    const newId = crypto.randomUUID ? crypto.randomUUID() : `settle-${Date.now()}`;
-
-    // Save to history immediately with default title
-    const newSettlement: RecentSettlement = {
-      id: newId,
-      title: '새로운 정산 모임', // User can change this later in settings
-      lastAccess: Date.now()
-    };
-
-    const updated = [newSettlement, ...recentSettlements];
-    localStorage.setItem('nanumi_recent_settlements', JSON.stringify(updated));
-
-    router.push(`/settle/${newId}`);
+    router.push('/create');
   };
 
   return (
