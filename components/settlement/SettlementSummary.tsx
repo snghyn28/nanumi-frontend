@@ -13,7 +13,6 @@ const SettlementSummary: React.FC<SettlementSummaryProps> = ({ summary, detailLi
     const amountColor = isReceive ? 'text-receive' : 'text-pay';
     const message = isReceive ? '내가 받을 돈' : '내가 지불할 돈';
 
-    // Format currency
     const formattedAmount = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'KRW',
@@ -21,7 +20,7 @@ const SettlementSummary: React.FC<SettlementSummaryProps> = ({ summary, detailLi
     }).format(summary.totalAmount).replace('KRW', '').trim();
 
     return (
-        <div className="px-6 py-8 bg-background">
+        <div className="px-6 pt-12 pb-6 bg-white">
             <p className="text-gray-500 text-sm mb-1 font-medium">{message}</p>
             <div className={`text-4xl font-bold tracking-tighter ${amountColor} mb-2`}>
                 {formattedAmount}<span className="text-2xl text-foreground/80"> 원</span>

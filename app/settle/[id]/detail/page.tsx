@@ -20,7 +20,7 @@ export default function SettlementDetailPage() {
 
 
     const isReceive = summary.type === 'receive';
-    const amountColor = isReceive ? 'text-green-500' : 'text-red-500'; // Updated to Green for receive, Red for pay
+    const amountColor = isReceive ? 'text-receive' : 'text-pay'; // Updated to Green for receive, Red for pay
     const message = isReceive ? '내가 받을 돈' : '내가 지불할 돈';
 
     // Reusing the formatting logic
@@ -66,7 +66,7 @@ export default function SettlementDetailPage() {
         const arrowColor = "text-gray-300";
 
         // Amount color: Blue for me, Gray for others
-        const amountTextClass = isMyRelated ? "text-blue-600 font-bold" : "text-gray-400 font-medium";
+        const amountTextClass = isMyRelated ? "text-accent font-bold" : "text-gray-400 font-medium";
 
         return (
             <motion.div
