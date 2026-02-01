@@ -203,6 +203,14 @@ const ExpenseDetailModal: React.FC<ExpenseDetailModalProps> = ({ isOpen, onClose
                         animate={{ y: 0 }}
                         exit={{ y: "100%" }}
                         transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                        drag="y"
+                        dragConstraints={{ top: 0 }}
+                        dragElastic={{ top: 0, bottom: 0.2 }}
+                        onDragEnd={(_, info) => {
+                            if (info.offset.y > 100 || info.velocity.y > 500) {
+                                onClose();
+                            }
+                        }}
                     >
                         <div className="w-full max-w-md bg-white rounded-t-3xl shadow-2xl pointer-events-auto h-[85dvh] flex flex-col">
                             <div className="pt-5 pb-2 px-6 flex-none">
